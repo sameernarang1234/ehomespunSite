@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/buyerTerms/buyerTerms.css' %}">
+<link rel="stylesheet" href="{% static 'css/buyerTerms/phone.css' %}" media="screen and (max-width: 800px)">
+{% endblock %}
+
+{% block body %}
+<h1 class="page-heading">Buyer Terms and Conditions</h1>
+<div class="main-container">
+    <p>At eHomespun.com, we strive to deliver you unique, high quality products that are hand crafted by extraordinary individuals while keeping customer satisfaction a top priority.</p>
+    <ul>
+        <li class="list-item">All sales transactions are strictly between you (the buyer) and the individual seller/shop. Payments will be securely made to individual seller/shops for all products and services. We (www.ehomespun.com) are not responsible for any buyer items, shipping, returns, exchanges etc. We can however, assist you in getting any issues resolved if not satisfied with a product/service. As customer satisfaction is a priority to us.</li>
+        <li class="list-item">If you (the buyer) need any information about products or services that are not listed in the description, you must contact the individual seller/shop directly.</li>
+        <li class="list-item">If you (the buyer) are needing a refund, exchange etc., you must contact the individual seller/shop directly. As it will need to be discussed with the seller/shop for any of these. If you and the Seller cannot find a resolution, please submit a Refund Ticket in our support system and we will be happy to investigate your request. After review of your case is complete, we may or may not grant you a refund. That decision will be based solely off of the conclusion of the investigation.</li>
+        <li class="list-item">If you (the buyer) are having issues contacting a seller/shop or receiving seller/shop responses and the issue is not being resolved in a timely manner, please feel free to create a support ticket so we can assist you in getting a resolution.</li>
+        <li class="list-item">We encourage that you (the buyer) leave feedback or rate individual sellers/shops.</li>
+        <li class="list-item"><strong>Bad Reviews:</strong> It is very important that if you (the buyer) leave a review, it is an honest review. These individuals work hard to make these products and try get them to you as soon as possible. That being said, please do not leave a bad review on Sellers’ Shops if they did everything they were supposed to do on their end (sent correct item(s), item(s) arrived in good condition, item(s) arrived on time, etc.). Intentionally leaving a false bad review can damage a Sellers’ brand. Therefore, if you are found leaving false bad reviews intentionally, your account could be subject to temporary suspension or even a permanent ban. Honesty goes a long way and that is all that is being asked of you when leaving a review. Thank you.</li>
+    </ul>
+</div>
+{% endblock %}

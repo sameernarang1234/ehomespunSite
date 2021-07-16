@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/support/support.css' %}">
+{% endblock %}
+
+{% block body %}
+<h1 class="page-heading">Support</h1>
+<div class="new-ticket">
+    <div>
+        <form action="" method="post">
+            <p><strong>Name </strong><span>*</span></p>
+            <p>Please insert your name.</p>
+            <input name="name" type="text" class="form-control">
+
+            <p><strong>Email Address </strong><span>*</span></p>
+            <p>Please insert your Email ID.</p>
+            <input name="email" type="email" class="form-control">
+
+            <p><strong>Subject </strong><span>*</span></p>
+            <p>Short description of the ticket</p>
+            <input name="subject" type="text" class="form-control">
+
+            <p><strong>Description </strong><span>*</span></p>
+            <p>Detailed description of the ticket</p>
+            <input name="description" type="text" class="description">
+
+            <p><strong>Attach File</strong></p>
+            <input name="file" type="file">
+
+            <p><strong>Select Category </strong><span>*</span></p>
+            <p>Select a category</p>
+            <input name="General" type="checkbox"> General <br>
+            <input name="Account" type="checkbox"> Account Enquiries <br>
+            <input name="Refund" type="checkbox"> Refund <br>
+            <input name="Return" type="checkbox"> Exchanges and Returns <br>
+            <div class="button-container">
+                <button type="submit" class="submit">Submit</button>
+                <button type="reset" class="reset">Reset Form</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

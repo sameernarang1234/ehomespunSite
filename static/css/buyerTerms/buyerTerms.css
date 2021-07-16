@@ -1,0 +1,14 @@
+.page-heading {
+    text-align: center;
+}
+
+.main-container {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.list-item {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
