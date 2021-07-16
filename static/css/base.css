@@ -1,0 +1,119 @@
+body {
+    background-color: #efe7dc;
+    margin: 0px;
+    font-family: Helvetica;
+}
+
+.header {
+    background-color: blue;
+    color: white;
+    display: flex;
+    text-align: center;
+}
+
+.header p {
+    width: 100%;
+    font-size: 13px;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-sub-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 210px;
+}
+
+.navbar-sub-container div {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar img, .navbar form, .navbar a {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text-input {
+    border-style: none;
+    height: 30px;
+    width: 400px;
+}
+
+#categories-button {
+    border-style: none;
+    background-color: white;
+    height: 30px;
+    cursor: pointer;
+}
+
+#submit-button {
+    border-style: none;
+    background-color: black;
+    color: white;
+    height: 30px;
+    cursor: pointer;
+}
+
+.navigationContainer {
+    background-color: white;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+}
+
+.navigation div {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 700px;
+}
+
+.navigation a {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+    text-decoration: none;
+    color: blues;
+}
+
+.footer {
+    background-color: #519bcc;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.footer div {
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    text-align: justify;
+}
+
+.footer div a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    text-decoration: underline;
+}

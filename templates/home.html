@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+{% endblock %}
+
+{% block title %}HomePage{% endblock %}
+
+{% block body %}
+
+<div class="seller-registration">
+    <div>
+        <p>Want to sell something?</p>
+        <h1>Become a seller and experience a new world of online selling. No listing fees, no selling fees. Ever.</h1>
+        <form>
+            <button class="register-button">Register Now!</button>
+        </form>
+    </div>
+    <img src="../static/assets/image1.jpeg" alt="Registration-Image">
+</div>
+
+<h1 class="featuredHeading">Featured Products</h1>
+<div class="featured">
+    
+</div>
+<h1 class="Heading">Check Out Our Latest Deals</h1>
+<div class="deals">
+
+</div>
+
+<div class="categoriesHeader">
+    <h1>Looking for something?</h1>
+    <p>BROWSE OUR CATEGORIES AND FIND FITS FOR THE INNER YOU</p>
+</div>
+
+<h1 class="Heading">Choose Category</h1>
+<div class="categories">
+    <div>
+
+    </div>
+    <div>
+
+    </div>
+</div>
+
+<h1 class="Heading">Deal of the Week</h1>
+<div class="dealOfWeek">
+    <div>
+
+    </div>
+    <div>
+
+    </div>
+</div>
+
+<h1 class="Heading">You might like</h1>
+<div class="youMightLike">
+    <div>
+
+    </div>
+    <div>
+
+    </div>
+</div>
+
+<div class="howItWorks">
+    <p class="first-text">BECOME A SELLER AND LIST YOUR PRODUCTS</p>
+    <h1>How It Works</h1>
+    <p class="second-text">You are one step closer to success</p>
+    <div class="howItWorksSubContainer">
+        <div class="item-container">
+            <div>
+                <h2>Create a Free Account</h2>
+                <p>Create your free account and click "become a seller".</p>
+            </div>
+            <div>
+                <h2>Pick a Seller Membership Plan</h2>
+                <p>Select a Seller Membership Plan that suits your needs.</p>
+            </div>
+        </div>
+        <div class="item-container">
+            <div>
+                <h2>Customize Your Shop and Add Products</h2>
+                <p>Customize your very own shop and upload all your products. List all you want without any listing fees.</p>
+            </div>
+            <div>
+                <h2>Start Selling</h2>
+                <p>Start selling your goods and make money - without any other fees! It really is that simple.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

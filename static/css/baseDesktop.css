@@ -1,0 +1,7 @@
+.navbar {
+    flex-direction: column;
+}
+
+.create-store {
+    margin-top: 20px;
+}

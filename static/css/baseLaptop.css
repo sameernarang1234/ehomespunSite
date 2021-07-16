@@ -1,0 +1,17 @@
+.navigation {
+    width: 700px;
+    flex-direction: column;
+    height: 70px;
+}
+
+.navigation div {
+    margin-top: 10px;
+}
+
+.form-horizontal {
+    flex-direction: column;
+}
+
+.form-horizontal input {
+    display: block;
+}

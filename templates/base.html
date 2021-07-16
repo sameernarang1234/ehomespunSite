@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/baseDesktop.css' %}" media="screen and (max-width: 1780px)">
+    <link rel="stylesheet" href="{% static 'css/baseLaptop.css' %}" media="screen and (max-width: 1350px)">
+    <link rel="stylesheet" href="{% static 'css/baseTablet.css' %}" media="screen and (max-width: 750px)">
+    {% block css %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div class="header">
+        <p>Become a Seller and get your first year for just 99 cents! Need help? Contact us for 24/7 support</p>
+    </div>
+    <div class="navbar">
+        <img src="../static/assets/logo.png" alt="eHomespun-logo">
+        <form class="form-horizontal" action="" method="post">
+            <input type="text" name="search" placeholder="Search" class="text-input">
+            <input id="category" type="hidden" name="category">
+            <button id="categories-button">All categories</button>
+            <button type="submit" id="submit-button">
+                <!-- <img src="../static/assets/search.png" rel="search-img" class="search-img"> -->
+                Search
+            </button>
+        </form>
+        <a href="#" class="create-store">Create a store</a>
+        <div class="navbar-sub-container">
+            <div>
+                <!-- <img src="../static/assets/login.png" rel="login-img" class="logo-img"> -->
+                <p>Login</p>
+            </div>
+            <div>
+                <!-- <img src="../static/assets/wishlist.png" rel="login-img" class="logo-img"> -->
+                <p>Wishlist</p>
+            </div>
+            <div class="cart-div">
+                <!-- <img src="../static/assets/cart.png" rel="cart-img" class="logo-img"> -->
+                <p>Cart $0.00</p>
+            </div>
+        </div>
+    </div>
+    <div class="navigationContainer">
+        <div class="navigation">
+            <div>
+                <a href="#">Login/Sign-up</a>
+                <a href="#">Shop</a>
+                <a href="#">Cart</a>
+                <a href="#">Checkout</a>
+                <a href="#">Support</a>
+                <a href="#">Buyer Terms and Conditions</a>
+            </div>
+            <div>
+                <a href="#">Seller Terms and Conditions</a>
+                <a href="#">Refund Policy</a>
+                <a href="#">My Account</a>
+                <a href="#">Password Reset</a>
+                <a href="#">Homepage</a>
+            </div>
+        </div>
+    </div>
+    {% block body %}{% endblock %}
+    <div class="footer">
+        <div>
+            <h3>About eHomespun</h3>
+            <p>eHomespun is a new home to buy and sell handmade, vintage, custom items and more. eHomespun was built from the ground up by two Handcrafters with one simple goal in mind – create a platform for individual sellers without those ridiculous extra fees. Less fees make it possible to have lower prices, and we all love lower prices.</p>
+            <h3>Your Privacy Is Our Top Priority</h3>
+            <p>Take peace in knowing that we go to great lengths to make sure your information is protected and stays protected. If there is ever anything you need, please feel free to reach out to us so we can get you the help you’re looking for.</p>
+        </div>
+        <div>
+           <a>Privacy Policy</a>
+           <a>Cookie Policy</a>
+           <a>Buyer Terms and Conditions</a>
+           <a>Catalog</a>
+           <a>Support</a>
+        </div>
+        <div>
+            <a>Seller Terms and Conditions</a>
+            <a>Contact Us</a>
+        </div>
+        <div>
+            <h3>Sign-up for our Newsletter</h3>
+            <p>Stay in the loop about exciting news, updates, deals and more!</p>
+            <form class="form-vertical">
+                <input type="email" name="email" placeholder="Email">
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
