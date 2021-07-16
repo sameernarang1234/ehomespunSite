@@ -1,0 +1,41 @@
+.main-heading {
+    text-align: center;
+}
+
+.main-div {
+    display: flex;
+}
+
+.red-star {
+    color: red;
+}
+
+.login-form-container {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.login-form input {
+    border-style: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 40px;
+    width: 90%;
+}
+
+.btn-submit {
+    background-color: #ffca00; 
+    border-style: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+    width: 30%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}

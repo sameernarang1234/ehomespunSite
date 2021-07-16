@@ -1,0 +1,7 @@
+.main-div {
+    flex-direction: column;
+}
+
+.login-form-container {
+    width: 80%;
+}
