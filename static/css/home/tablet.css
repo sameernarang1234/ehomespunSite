@@ -1,0 +1,20 @@
+.seller-registration {
+    flex-direction: column;
+}
+
+.seller-registration div, .seller-registration img {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+.howItWorksSubContainer {
+    flex-direction: column;
+}
+
+.item-container div {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}

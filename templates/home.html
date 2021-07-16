@@ -3,6 +3,8 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/home/tablet.css' %}" media="screen and (max-width: 750px)">
+<link rel="stylesheet" href="{% static 'css/home/phone.css' %}" media="screen and (max-width: 570px)">
 {% endblock %}
 
 {% block title %}HomePage{% endblock %}

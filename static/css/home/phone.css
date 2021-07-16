@@ -1,0 +1,7 @@
+.item-container {
+    flex-direction: column;
+}
+
+.item-container div {
+    width: 80%;
+}

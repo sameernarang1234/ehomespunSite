@@ -11,11 +11,6 @@ body {
     text-align: center;
 }
 
-.header p {
-    width: 100%;
-    font-size: 13px;
-}
-
 .navbar {
     display: flex;
     align-items: center;
