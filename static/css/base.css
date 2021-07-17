@@ -6,12 +6,18 @@ body {
 
 .header {
     display: flex;
+    align-items: center;
     background-color: blue;
     color: white;
-    text-align: center;
+    padding-top: 10px;
 }
 
-.navbar {
+.header p {
+    text-align: center;
+    width: 100%;
+}
+
+.nav-bar {
     display: flex;
     align-items: center;
     width: 80%;
@@ -33,7 +39,7 @@ body {
     margin-right: auto;
 }
 
-.navbar img, .navbar form, .navbar a {
+.nav-bar img, .nav-bar form, .nav-bar a {
     margin-left: auto;
     margin-right: auto;
 }
@@ -80,14 +86,14 @@ body {
     width: 700px;
 }
 
-.navigation a {
+.navigation form {
     margin-left: auto;
     margin-right: auto;
 }
 
-a {
-    text-decoration: none;
-    color: blues;
+.navigation div form button {
+    border-style: none;
+    background-color: white;
 }
 
 .footer {

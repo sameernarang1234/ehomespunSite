@@ -28,6 +28,7 @@
 }
 .Heading {
     text-align: center;
+    margin-top: 100px;
 }
 .categoriesHeader {
     background-color: #E1BB8D;
@@ -66,4 +67,20 @@
 }
 .item-container div p {
     color: grey;
+}
+
+.categories {
+    background-color: white;
+}
+
+.categories-sub-container div h3{
+    text-align: center;
+    width: 100%;
+}
+
+.category-btn {
+    background-color: white;
+    border-style: none;
+    text-align: center;
+    width: 100%;
 }

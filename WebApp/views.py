@@ -1,8 +1,13 @@
 from django.shortcuts import render
+from .models import Category, SubCategory
 
 # Create your views here.
 def homePage(request):
-    return render(request, 'home.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'home.html', params)
 
 def loginPage(request):
     return render(request, 'login.html')
