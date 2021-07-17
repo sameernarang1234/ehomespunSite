@@ -15,3 +15,9 @@ def buyerTerms(request):
 
 def sellerTerms(request):
     return render(request, 'sellerTerms.html')
+
+def refundPolicy(request):
+    return render(request, 'refund.html')
+
+def passwordReset(request):
+    return render(request, 'passwordReset.html')

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/refund/refund.css' %}">
+<link rel="stylesheet" href="{% static 'css/refund/phone.css' %}" media="screen and (max-width: 750px)">
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Refund Policy</h1>
+<div class="main-container">
+    <p>eHomeSpun is not responsible for refunds of purchased items, as we do not sell the physical goods ourselves. When items are purchased through eHomeSpun, the said items are being purchased by an individual seller, not us. We encourage you (the buyer) to first try to find a resolution with the Seller. If there is an issue with your order (wrong item, damaged item, lost item, missing item, item is not as described, etc), you must reach out to the Seller whom you made the purchase from first. There is a system in place to do so on each Sellers shop page. Refunding is completely up to each Seller individually. Sellers make their own decisions in regards to refunding. That being said, Sellers reserve the right to offer refunds or to not offer refunds. That decision is theirs entirely. This information should be visibly stated on each Seller’s shop. However, if you and the Seller are unable to resolve the issue, you may use our Ticket System to submit a refund request to us. We may or may not grant you a refund, depending on the conclusion of the investigation of your case.</p>
+</div>
+{% endblock %}

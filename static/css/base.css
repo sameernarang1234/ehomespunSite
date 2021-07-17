@@ -5,9 +5,9 @@ body {
 }
 
 .header {
+    display: flex;
     background-color: blue;
     color: white;
-    display: flex;
     text-align: center;
 }
 
