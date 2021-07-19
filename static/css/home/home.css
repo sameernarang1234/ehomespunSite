@@ -84,3 +84,7 @@
     text-align: center;
     width: 100%;
 }
+
+.category-btn:hover {
+    color: blue;
+}

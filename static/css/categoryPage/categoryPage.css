@@ -1,0 +1,14 @@
+.main-heading {
+    text-align: center;
+}
+
+.submit-button {
+    border-style: none;
+    background: transparent;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.submit-button:hover {
+    color: blue;
+}

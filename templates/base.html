@@ -35,13 +35,20 @@
         </form>
         <a href="#" class="create-store">Create a store</a>
         <div class="navbar-sub-container">
+            {% if not user.is_authenticated %}
             <div>
                 <!-- <img src="../static/assets/login.png" rel="login-img" class="logo-img"> -->
-                <p>Login</p>
+                <p><a href="/login/">Login</a></p>
             </div>
+            {% else %}
+            <div>
+                <!-- <img src="../static/assets/login.png" rel="login-img" class="logo-img"> -->
+                <p><a href="/logout/">Logout</a></p>
+            </div>
+            {% endif %}
             <div>
                 <!-- <img src="../static/assets/wishlist.png" rel="login-img" class="logo-img"> -->
-                <p>Wishlist</p>
+                <p><a href="#">Wishlist</a></p>
             </div>
             <div class="cart-div">
                 <!-- <img src="../static/assets/cart.png" rel="cart-img" class="logo-img"> -->
@@ -56,9 +63,15 @@
             </button>
             <div class="collapse navbar-collapse mx-auto" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0 mx-auto">
+                    {% if not user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Login/Sign-up</a>
+                        <a class="nav-link active" aria-current="page" href="/login/">Login/Sign-up</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/dashboard/">Dashboard</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Shop</a>
                     </li>
@@ -69,25 +82,22 @@
                         <a class="nav-link active" aria-current="page" href="#">Checkout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Support</a>
+                        <a class="nav-link active" aria-current="page" href="/support/">Support</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Buyer Terms and Conditions</a>
+                        <a class="nav-link active" aria-current="page" href="/buyer-information/">Buyer Terms and Conditions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Seller Terms and Conditions</a>
+                        <a class="nav-link active" aria-current="page" href="/seller-information/">Seller Terms and Conditions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Refund Policy</a>
+                        <a class="nav-link active" aria-current="page" href="/refund-policy/">Refund Policy</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">My Account</a>
+                        <a class="nav-link active" aria-current="page" href="/password-reset/">Password Reset</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Password Reset</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Homepage</a>
+                        <a class="nav-link active" aria-current="page" href="/">Homepage</a>
                     </li>
                 </ul>
             </div>

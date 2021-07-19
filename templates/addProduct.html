@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/addProduct/addProduct.css' %}">
+{% endblock %}
+
+{% block title %}Add Products{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Add Products</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto main-container">
+    <h1>Add Product</h1>
+    <form>
+        <p>Product Name</p>
+        <input type="text" name="product_name" class="single-line-input">
+        
+        <p>Product Description</p>
+        <textarea type="text" name="product_description" class="multi-line-input" placeholder="Please add a full description of your product here"></textarea>
+        
+        <p>Product Short Description</p>
+        <textarea type="text" name="product_short_description" class="multi-line-input" placeholder="Please add a short description of your product here" row></textarea>
+        
+        <p>Categories</p>
+        <select class="form-select" aria-label="Default select example" name="category">
+            <option selected></option>
+            {% for category in categories %}
+            <option value="{{category.name}}">{{category.name}}</option>
+            {% endfor %}
+        </select>
+        
+        <p>Please add 3 images of the product</p>
+        <input type="file" name="image1">
+        <input type="file" name="image2">
+        <input type="file" name="image3">
+        
+        <p>Product Type</p>
+        <select class="form-select" aria-label="Default select example" name="product-type">
+            <option selected>Simple Product</option>
+            <option value="Simple Product">Simple Product</option>
+            <option value="Grouped Product">Grouped Product</option>
+            <option value="External/Affiliate Product">External/Affiliate Product</option>
+            <option value="Variable Product">Variable Product</option>
+        </select>
+        
+        <p>Regular Price</p>
+        <input type="text" name="regular-price">
+        
+        <p>Sale Price</p>
+        <input type="text" name="sale-price">
+
+        <h3>Taxes</h3>
+
+        <p>Tax Status</p>
+        <select class="form-select" aria-label="Default select example" name="tax-status">
+            <option selected>Taxable</option>
+            <option value="Taxable">Taxable</option>
+            <option value="Shipping Only">Shipping Only</option>
+            <option value="None">None</option>
+        </select>
+
+        <p>Tax Class</p>
+        <select class="form-select" aria-label="Default select example" name="tax-class">
+            <option selected>Standard</option>
+            <option value="Standard">Standard</option>
+            <option value="Reduced Rate">Reduced Rate</option>
+            <option value="Zero Rate">Zero Rate</option>
+        </select>
+
+        <h3>Inventory</h3>
+
+        <p>Stock Status</p>
+        <select class="form-select" aria-label="Default select example" name="stock-status">
+            <option selected>In Stock</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Out Of Stock">Out Of Stock</option>
+        </select>
+    </form>
+</div>
+{% endblock %}

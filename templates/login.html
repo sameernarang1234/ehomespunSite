@@ -6,30 +6,35 @@
 <link rel="stylesheet" href="{% static 'css/login/phone.css' %}" media="screen and (max-width: 750px)">
 {% endblock %}
 
+{% block title %}Login/Sign-up{% endblock %}
+
 {% block body %}
 <h1 class="main-heading">Login/Sign-up</h1>
 <div class="main-div">
     <div class="login-form-container">
         <h1>Login</h1>
-        <form class="login-form" action="" method="post">
-            <div>Email address <span class="red-star">*</span></div>
-            <input type="email" name="email" placeholder="Email..." class="login-form">
+        <form class="login-form" action="/user/login/" method="post">
+            {% csrf_token %}
+            <div>Username <span class="red-star">*</span></div>
+            <input class="text-input" type="text" name="username" placeholder="Username..." class="login-form">
             <div>Password <span class="red-star">*</span></div>
-            <input type="password" name="password" placeholder="Password..." class="login-form">
+            <input class="text-input" type="password" name="password" placeholder="Password..." class="login-form">
             <button type="submit" class="btn-submit">LOG IN</button>
             <a href="#">Lost your password?</a>
         </form>
     </div>
     <div class="login-form-container">
         <h1>Register</h1>
-        <form class="login-form" action="" method="post">
+        <form class="login-form" action="/user/signup/" method="post">
+            {% csrf_token %}
             <div>Username <span class="red-star">*</span></div>
-            <input type="text" name="username" placeholder="Username..." class="login-form">
+            <input class="text-input" type="text" name="username" placeholder="Username..." class="login-form">
             <div>Email address <span class="red-star">*</span></div>
-            <input type="email" name="email" placeholder="Email..." class="login-form">
+            <input class="text-input" type="email" name="email" placeholder="Email..." class="login-form">
             <div>Password <span class="red-star">*</span></div>
-            <input type="password" name="password" placeholder="Password..." class="login-form">
+            <input class="text-input" type="password" name="password" placeholder="Password..." class="login-form">
             <p>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy. By clicking REGISTER, you confirm that you have read and accepted the <a href="#">terms and conditions.</a></p>
+            <input class="checkbox-input" type="checkbox" name="isMerchantAccount"> Apply to become a seller?
             <button type="submit" class="btn-submit">REGISTER</button>
         </form>
     </div>

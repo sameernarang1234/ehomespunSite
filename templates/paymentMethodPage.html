@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/paymentMethodPage/paymentMethodPage.css' %}">
+{% endblock %}
+
+{% block title %}Payment Methods{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Payment Methods</h1>
+<div class="main-container">
+    <div class="container-1">
+        <div class="container">
+            <a href="/user-dashboard/" class="dashboard-navigation">Dashboard</a>
+            <a href="/orders/" class="dashboard-navigation">Orders</a>
+            <a href="/subscriptions/" class="dashboard-navigation">Subscriptions</a>
+            <a href="/downloads/" class="dashboard-navigation">Downloads</a>
+            <a href="/address/" class="dashboard-navigation">Addresses</a>
+            <a href="/payment-method/" class="dashboard-navigation">Payment methods</a>
+            <a href="/account/" class="dashboard-navigation">Account details</a>
+            <a href="/become-seller/" class="dashboard-navigation">Become a seller</a>
+            <a href="/logout/" class="dashboard-navigation">Logout</a>
+        </div>
+    </div>
+    <div class="container-2">
+        <div class="container">
+            <h2>Hello</h2>
+            <p>From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

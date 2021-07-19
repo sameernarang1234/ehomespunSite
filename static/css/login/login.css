@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-.login-form input {
+.text-input {
     border-style: none;
     display: block;
     margin-left: auto;
@@ -26,6 +26,10 @@
     margin-bottom: 10px;
     height: 40px;
     width: 90%;
+}
+
+.checkbox-input {
+    margin-bottom: 20px;
 }
 
 .btn-submit {

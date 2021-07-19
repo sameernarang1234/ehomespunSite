@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/proProducts/proProducts.css' %}">
+{% endblock %}
+
+{% block title %}Pro Dashboard{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Pro Dashboard</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto main-container">
+    <form action="/add-product/" method="get">
+        <button class="add-product-btn" type="submit">ADD PRODUCT</button>
+    </form>
+</div>
+{% endblock %}

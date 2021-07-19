@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/categoryPage/categoryPage.css' %}">
+{% endblock %}
+
+{% block title %}Category{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">{{category}}</h1>
+<div class="container row">
+    {% for subCategory in sub_categories %}
+    <div class="col-lg-3">
+        <form>
+            <button class="submit-button"><h4>{{subCategory.name}}</h4></button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
