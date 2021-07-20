@@ -29,7 +29,7 @@
 
 <div class="container mx-auto">
     <br>
-    <h2>Payments</h2>
+    <h2>Branding</h2>
     <br>
     <div class="row menu-bar">
         <div class="col-xl-1 col-sm-3"><a href="/pro-settings/">Store</a></div>
@@ -41,21 +41,33 @@
         <div class="col-xl-1 col-sm-3"><a href="/pro-membership/">Membership</a></div>
     </div>
     <br>
+
+    <h3>Store Images</h3>
     <form>
-        <h3>PayPal Account details</h3>
-        <p><strong>Client ID <span>*</span></strong></p>
-        <input class="form-control" name="paypal_client_id" type="password">
-        <br>
-        
-        <h3>Stripe Account Details</h3>
-        <p><strong>Account Public Key <span>*</span></strong></p>
-        <input class="form-control" name="stripe_public_key" type="password">
-        <br>
+        <p><strong>Shipping Type <span>*</span></strong></p>
+        <select class="form-select mb-3" aria-label="Default select example" name="shipping-type">
+            <option selected>Flat Rate</option>
+            <option value="Country Table Rate">Country Table Rate</option>
+        </select>
 
-        <p><strong>Account Private Key <span>*</span></strong></p>
-        <input class="form-control" name="stripe_private_key" type="password">
+        <div class="row">
+            <div class="col-lg-6 container-fluid">
+                <p><strong>National Shipping Fee ($) <span>*</span></strong></p>
+                <input class="form-control mb-3" name="national-shipping-fee" type="number">
 
-        <button class="btn btn-primary my-4" type="submit">Save Changes</button>
+                <p><strong>Free shipping order for national shipping ($) <span>*</span></strong></p>
+                <input class="form-control mb-3" name="national-flat-shipping-fee" type="number">
+            </div>
+            <div class="col-lg-6 container-fluid">
+                <p><strong>International Shipping Fee ($) <span>*</span></strong></p>
+                <input class="form-control mb-3" name="international-shipping-fee" type="number">
+
+                <p><strong>Free shipping order for international shipping ($) <span>*</span></strong></p>
+                <input class="form-control mb-3" name="international-flat-shipping-fee" type="number">
+            </div>
+        </div>
+
+        <button class="btn btn-primary mb-5" type="submit">Save Changes</button>
     </form>
 </div>
 

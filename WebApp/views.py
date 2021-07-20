@@ -156,6 +156,9 @@ def proPayments(request):
 def proBranding(request):
     return render(request, 'proBranding.html')
 
+def proShipping(request):
+    return render(request, 'proShipping.html')
+
 def categoryPage(request):
     category = request.GET.get('category')
     categoryDB = Category.objects.get(name=category)

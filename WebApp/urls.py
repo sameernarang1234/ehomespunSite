@@ -27,5 +27,6 @@ urlpatterns = [
     path('pro-settings/', views.proSettings, name='proSettings'),
     path('pro-payments/', views.proPayments, name='proPayments'),
     path('pro-branding/', views.proBranding, name='proBranding'),
+    path('pro-shipping/', views.proShipping, name='proShipping'),
     path('category/', views.categoryPage, name='categoryPage'),
 ]
