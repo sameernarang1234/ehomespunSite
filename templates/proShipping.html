@@ -7,6 +7,15 @@
 
 {% block title %}Pro Dashboard{% endblock %}
 
+{% block notification %}
+{% if shipping_enabled %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Shipping Details Updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block body %}
 <h1 class="main-heading">Pro Dashboard</h1>
 
@@ -42,7 +51,7 @@
     </div>
     <br>
 
-    <h3>Store Images</h3>
+    <h3>Shipping</h3>
     <form>
         <p><strong>Shipping Type <span>*</span></strong></p>
         <select class="form-select mb-3" aria-label="Default select example" name="shipping-type">
@@ -53,22 +62,81 @@
         <div class="row">
             <div class="col-lg-6 container-fluid">
                 <p><strong>National Shipping Fee ($) <span>*</span></strong></p>
-                <input class="form-control mb-3" name="national-shipping-fee" type="number">
+                <input class="form-control mb-3" name="national-shipping-fee" type="text">
 
                 <p><strong>Free shipping order for national shipping ($) <span>*</span></strong></p>
-                <input class="form-control mb-3" name="national-flat-shipping-fee" type="number">
+                <input class="form-control mb-3" name="national-flat-shipping-fee" type="text">
+
+                <input class="form-check-input mb-3" name="free-national-shipping-fee" type="checkbox"> Free national shipping.
+                <br>
+
+                <input class="form-check-input mb-3" name="disable-national-shipping-fee" type="checkbox"> Disable national shipping.
             </div>
             <div class="col-lg-6 container-fluid">
                 <p><strong>International Shipping Fee ($) <span>*</span></strong></p>
-                <input class="form-control mb-3" name="international-shipping-fee" type="number">
+                <input class="form-control mb-3" name="international-shipping-fee" type="text">
 
                 <p><strong>Free shipping order for international shipping ($) <span>*</span></strong></p>
-                <input class="form-control mb-3" name="international-flat-shipping-fee" type="number">
+                <input class="form-control mb-3" name="international-flat-shipping-fee" type="text">
+
+                <input class="form-check-input mb-3" name="free-international-shipping-fee" type="checkbox"> Free international shipping.
+                <br>
+
+                <input class="form-check-input mb-3" name="disable-international-shipping-fee" type="checkbox"> Disable international shipping.
             </div>
         </div>
 
-        <button class="btn btn-primary mb-5" type="submit">Save Changes</button>
+        <p><strong>Product Handling Fee ($)</strong></p>
+        <input class="form-control mb-3" name="product-handling-fee" type="text">
+
+        <p><strong>Shipping From <span>*</span></strong></p>
+        <select class="form-select mb-3" id="address-type" aria-label="Default select example" name="shipping-address-type">
+            <option selected>Store Address</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <div id="address" class="mt-5">
+            <p><strong>Shipping Country <span>*</span></strong></p>
+            <select class="form-select mb-3" aria-label="Default select example" name="shipping-country">
+                <option selected>Canada</option>
+                <option value="Other">United States (US)</option>
+                <option value="Other">United Kingdom (UK)</option>
+            </select>
+
+            <p><strong>Shipping Address <span>*</span></strong></p>
+            <textarea class="form-select mb-2" aria-label="Default select example" name="shipping-address"></textarea>
+
+            <p><strong>City / Town <span>*</span></strong></p>
+            <input class="form-control mb-3" name="city-town" type="text">
+
+            <p><strong>State / County <span>*</span></strong></p>
+            <input class="form-control mb-3" name="state-county" type="text">
+
+            <p><strong>Postcode / Zip <span>*</span></strong></p>
+            <input class="form-control mb-3" name="postcode" type="text">
+        </div>
+
+        <button class="btn btn-primary my-3" type="submit">Save Changes</button>
     </form>
+    <script>
+        let addrType = document.getElementById("address-type")
+        let addressDiv = document.getElementById("address")
+        if (addrType.value === "Other") {
+            addressDiv.style.display = ""
+        }
+        else {
+            addressDiv.style.display = "none"
+        }
+        addrType.addEventListener("change", () => {
+            let addressDiv = document.getElementById("address")
+            if (addrType.value === "Other") {
+                addressDiv.style.display = ""
+            }
+            else {
+                addressDiv.style.display = "none"
+            }
+        })
+    </script>
 </div>
 
 

@@ -27,83 +27,10 @@
     <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
 </div>
 
-<div class="container row mx-auto main-container">
-    <div class="col-lg-6">
-        <h2>Commission Due</h2>
-        <div class="row">
-            <div class="col-6">
-                <p>Products</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Shipping</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Tax</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p><strong>Totals</strong></p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <h2>Commission Paid</h2>
-        <div class="row">
-            <div class="col-6">
-                <p>Products</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Shipping</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Tax</p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p><strong>Totals</strong></p>
-            </div>
-            <div class="col-6">
-                <p>$0.00</p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="container main-container">
-    <p class="account-details"><strong>Number of orders created:</strong> 0</p>
-    <p class="account-details"><strong>Total of all orders created:</strong> $0.00</p>
-    <p class="account-details"><strong>Number of Products Uploaded:</strong> 0</p>
-    <p class="account-details"><strong>Total of all the Products uploaded:</strong> $0.00</p>
+    <p class="account-details"><strong>Number of orders created:</strong> {{num_orders}}</p>
+    <p class="account-details"><strong>Total of all orders created:</strong> ${{amount_orders}}</p>
+    <p class="account-details"><strong>Number of Products Uploaded:</strong> {{num_products}}</p>
+    <p class="account-details"><strong>Total of all the Products uploaded:</strong> ${{amount_products}}</p>
 </div>
 {% endblock %}

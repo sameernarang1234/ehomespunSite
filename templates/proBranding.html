@@ -7,6 +7,13 @@
 
 {% block title %}Pro Dashboard{% endblock %}
 
+{% block notification %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Store images uploaded.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endblock %}
+
 {% block body %}
 <h1 class="main-heading">Pro Dashboard</h1>
 
@@ -43,7 +50,8 @@
     <br>
 
     <h3>Store Images</h3>
-    <form>
+    <form action="/pro-branding/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
         <p><strong>Store Banner <span>*</span></strong></p>
         <input type="file" name="store_banner" class="form-control mb-2">
 

@@ -6,6 +6,15 @@
 {% endblock %}
 
 {% block title %}Pro Dashboard{% endblock %}
+{% if paymentStatus %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Payment Details Updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% block notification %}
+
+{% endblock %}
 
 {% block body %}
 <h1 class="main-heading">Pro Dashboard</h1>
@@ -41,7 +50,7 @@
         <div class="col-xl-1 col-sm-3"><a href="/pro-membership/">Membership</a></div>
     </div>
     <br>
-    <form>
+    <form action="/pro-payments/" method="POST">
         <h3>PayPal Account details</h3>
         <p><strong>Client ID <span>*</span></strong></p>
         <input class="form-control" name="paypal_client_id" type="password">
