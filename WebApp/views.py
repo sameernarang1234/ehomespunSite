@@ -3,6 +3,7 @@ from .models import Category, SubCategory, UserDatabase, Product, StoreState, Or
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
+from datetime import date, timedelta
 
 # Create your views here.
 def homePage(request):
@@ -401,6 +402,115 @@ def proShipping(request):
     }
 
     return render(request, 'proShipping.html', params)
+
+def proSocial(request):
+    social_handles_updated = False
+
+    if request.method == 'POST':
+        twitter_username = request.POST.get("twitter-username")
+        instagram_username = request.POST.get("instagram-username")
+        facebook_url = request.POST.get("facebook-url")
+        linkedin_url = request.POST.get("linkedin-url")
+        youtube_url = request.POST.get("youtube-url")
+        pinterest_url = request.POST.get("pinterest-url")
+        snapchat_username = request.POST.get("snapchat-username")
+        telegram_username = request.POST.get("telegram-username")
+
+        username = request.session["username"]
+        user = UserDatabase.objects.get(username=username)
+        seller_id = user.id
+        store = Store.objects.get(seller_id=seller_id)
+        
+        store.twitter_username = twitter_username
+        store.instagram_username = instagram_username
+        store.facebook_url = facebook_url
+        store.linkedin_url = linkedin_url
+        store.youtube_url = youtube_url
+        store.pinterest_url = pinterest_url
+        store.snapchat_username = snapchat_username
+        store.telegram_username = telegram_username
+
+        store.save()
+
+        social_handles_updated = True
+    
+    params = {
+        "social": social_handles_updated
+    }
+
+    return render(request,"proSocial.html", params)
+
+def proPolicy(request):
+    policy_updated = False
+
+    if request.method == "POST":
+        terms_and_conditions = request.POST.get("terms-and-conditions")
+
+        username = request.session["username"]
+        user = UserDatabase.objects.get(username=username)
+        seller_id = user.id
+        store = Store.objects.get(seller_id=seller_id)
+
+        store.terms_and_conditions = terms_and_conditions
+        store.save()
+
+        policy_updated = True
+    
+    params = {
+        "policy": policy_updated
+    }
+
+    return render(request,"proPolicy.html", params)
+
+def proMembership(request):
+    is_member = False
+    username = request.session["username"]
+    user = UserDatabase.objects.get(username=username)
+    seller_id = user.id
+    print("SELLER ID")
+    print(seller_id)
+    store = Store.objects.get(seller_id=seller_id)
+
+    if request.method == "POST":
+        membership_type = request.POST.get("membership-type")
+
+        store.membership_type = membership_type
+        store.membership_status = "active"
+        store.membership_start_date = date.today()
+
+        store.save()
+
+        is_member = True
+
+    products = Product.objects.filter(seller_id=seller_id)
+    product_count = 0
+    for product in products:
+        product_count += 1
+
+    if store.membership_type == "ANNUAL SELLER MEMBERSHIP":
+        if (date.today() - store.membership_start_date) > timedelta(365):
+            store.membership_status = "inactive"
+        else:
+            store.membership_status = "active"
+    elif store.membership_type == "MONTHLY SELLER MEMBERSHIP":
+        if (date.today() - store.membership_start_date) > timedelta(30):
+            store.membership_status = "inactive"
+        else:
+            store.membership_status = "active"
+    else:
+        store.membership_status = "inactive"
+    
+    store.save()
+
+    params = {
+        "is_member": is_member,
+        "membership_type": store.membership_type,
+        "membership_status": store.membership_status,
+        "start_date": store.membership_start_date,
+        "product_count": product_count
+    }
+
+    return render(request,"proMembership.html", params)
 
 def categoryPage(request):
     category = request.GET.get('category')

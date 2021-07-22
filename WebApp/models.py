@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 class Category(models.Model):
@@ -18,10 +19,9 @@ class SubCategory(models.Model):
 
 class UserDatabase(models.Model):
     id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=50)
-    email = models.CharField(max_length=50)
-    user_type = models.CharField(max_length=50)
-
+    username = models.CharField(max_length=50, default='')
+    email = models.CharField(max_length=50, default="")
+    user_type = models.CharField(max_length=50, default="")
 
     def __str__(self):
         return self.username
@@ -62,6 +62,18 @@ class Store(models.Model):
     seller_id = models.IntegerField(default=0)
     store_banner = models.ImageField(upload_to="store/images",  default="")
     store_icon = models.ImageField(upload_to="store/images", default="")
+    terms_and_conditions = models.TextField(default="")
+    twitter_username = models.CharField(max_length=50, default="")
+    instagram_username = models.CharField(max_length=50, default="")
+    facebook_url = models.CharField(max_length=100, default="")
+    linkedin_url = models.CharField(max_length=100, default="")
+    youtube_url = models.CharField(max_length=100, default="")
+    pinterest_url = models.CharField(max_length=100, default="")
+    snapchat_username = models.CharField(max_length=50, default="")
+    telegram_username = models.CharField(max_length=50, default="")
+    membership_status = models.CharField(max_length=50, default="inactive")
+    membership_type = models.CharField(max_length=100, default="")
+    membership_start_date = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return self.name

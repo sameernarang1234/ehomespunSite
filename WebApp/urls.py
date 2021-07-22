@@ -28,5 +28,8 @@ urlpatterns = [
     path('pro-payments/', views.proPayments, name='proPayments'),
     path('pro-branding/', views.proBranding, name='proBranding'),
     path('pro-shipping/', views.proShipping, name='proShipping'),
+    path('pro-social/', views.proSocial, name='proSocial'),
+    path('pro-policies/', views.proPolicy, name='proPolicy'),
+    path('pro-membership/', views.proMembership, name='proMembership'),
     path('category/', views.categoryPage, name='categoryPage'),
 ]

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/proSocial/proSocial.css' %}">
+{% endblock %}
+
+{% block title %}Pro Dashboard{% endblock %}
+
+{% block notification %}
+{% if social %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Social media handles updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Pro Dashboard</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto">
+    <br>
+    <h2>Settings</h2>
+    <br>
+    <div class="row menu-bar">
+        <div class="col-xl-1 col-sm-3"><a href="/pro-settings/">Store</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-payments/">Payment</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-branding/">Branding</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-social/">Social</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-policies/">Policies</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-membership/">Membership</a></div>
+    </div>
+    <br>
+
+    <h3>Social</h3>
+    <form action="/pro-social/" method="POST">
+        {% csrf_token %}
+        <p><strong>Twitter username</strong></p>
+        <input class="form-control mb-3" name="twitter-username" type="text" placeholder="Your Twitter username without the URL">
+        
+        <p><strong>Instagram username</strong></p>
+        <input class="form-control mb-3" name="instagram-username" type="text" placeholder="Your Instagram username without the URL">
+        
+        <p><strong>Facebook URL</strong></p>
+        <input class="form-control mb-3" name="facebook-url" type="text" placeholder="Your Facebook URL">
+        
+        <p><strong>LinkedIn URL</strong></p>
+        <input class="form-control mb-3" name="linkedin-url" type="text" placeholder="Your LinkedIn URL">
+        
+        <p><strong>YouTube URL</strong></p>
+        <input class="form-control mb-3" name="youtube-url" type="text" placeholder="Your YouTube URL">
+        
+        <p><strong>Pinterest URL</strong></p>
+        <input class="form-control mb-3" name="pinterest-url" type="text" placeholder="Your Pinterest URL">
+        
+        <p><strong>SnapChat username</strong></p>
+        <input class="form-control mb-3" name="snapchat-username" type="text" placeholder="Your SnapChat username">
+        
+        <p><strong>Telegram username</strong></p>
+        <input class="form-control mb-3" name="telegram-username" type="text" placeholder="Your Telegram username">
+
+        <button class="btn btn-primary mb-3" type="submit">Save Changes</button>
+    </form>
+</div>
+
+
+
+{% endblock %}

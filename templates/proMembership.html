@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/proMembership/proMembership.css' %}">
+{% endblock %}
+
+{% block title %}Pro Dashboard{% endblock %}
+
+{% block notification %}
+{% if policy %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Terms and Conditions updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Pro Dashboard</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto">
+    <br>
+    <h2>Settings</h2>
+    <br>
+    <div class="row menu-bar">
+        <div class="col-xl-1 col-sm-3"><a href="/pro-settings/">Store</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-payments/">Payment</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-branding/">Branding</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-social/">Social</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-policies/">Policies</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-membership/">Membership</a></div>
+    </div>
+    <br>
+
+    <h3>Your current Membership</h3>
+
+    {% if membership_status == "inactive" %}
+    <p>No Active Membership</p>
+    {% else %}
+    <div class="row">
+        <div class="col-6">
+            <p>Plan</p>
+            <p>Start Date</p>
+            <p>Status</p>
+            <p>Products Uploaded</p>
+            <p>Allowed Categories</p>
+        </div>
+        <div class="col-6">
+            <p>{{membership_type}}</p>
+            <p>{{start_date}}</p>
+            <p>{{membership_status}}</p>
+            <p>{{product_count}}</p>
+            <p>All Categories</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>Annual Seller Membership</h2>
+            
+            <p class="membership-details">This Premium 1 Year Seller Membership gives you access to your own shop to list as many products as you wish, without the additional fees! Features include: -unlimited product space -  -no listing fees -  -no commission fees -  -no advertising fees -  -comprehensive Pro Dashboard -  -customizable shipping - so you can ship the way you need -  -create your own coupons for anything or anyone you want -  -link your Social Shop pages (Facebook, Twitter, Instagram, LinkedIn, YouTube, Pinterest, Snapchat, Telegram). And so much more! -  -Also, Premium members will be eligible to receive exclusive offers and deals!</p>
+
+            <h3>COST: <strong>$0.99</strong> / year</h3>
+
+            <form action="/pro-membership/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="membership-type" value="ANNUAL SELLER MEMBERSHIP">
+                {% if membership_type != "ANNUAL SELLER MEMBERSHIP" %}
+                <button class="btn btn-primary mb-3" type="submit">Upgrade Plan</button>
+                {% endif %}
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <h2>Monthly Seller Memberships</h2>
+
+            <p class="membership-details"><strong>30 Day Seller Membership</strong> Gives you access to your own shop to list as many products as you wish, without the additional fees! Features include: unlimited product space -  no listing fees -  no commission fees -  no advertising fees -  comprehensive Pro Dashboard -  customizable shipping, so you can ship the way you need -  create your own coupons for anything or anyone you want -  link your Social pages (Facebook, Twitter, Instagram, LinkedIn, YouTube, Pinterest, Snapchat, Telegram). And so much more!</p>
+
+            <h3>COST: <strong>$4.99</strong> / month</h3>
+
+            <form action="/pro-membership/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="membership-type" value="MONTHLY SELLER MEMBERSHIP">
+                {% if membership_type != "MONTHLY SELLER MEMBERSHIP" %}
+                <button class="btn btn-primary mb-3" type="submit">Upgrade Plan</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
