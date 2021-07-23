@@ -31,5 +31,10 @@ urlpatterns = [
     path('pro-social/', views.proSocial, name='proSocial'),
     path('pro-policies/', views.proPolicy, name='proPolicy'),
     path('pro-membership/', views.proMembership, name='proMembership'),
+    path('pro-ratings/', views.proRatings, name='proRatings'),
+    path('pro-refunds/', views.proRefunds, name='proRefunds'),
+    path('pro-coupons/', views.proCoupons, name='proCoupons'),
+    path('add-coupon/', views.proAddCoupon, name='proAddCoupon'),
+    path('pro-store/', views.proStore, name='proStore'),
     path('category/', views.categoryPage, name='categoryPage'),
 ]

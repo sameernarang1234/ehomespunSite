@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/addCoupon/addCoupon.css' %}">
+{% endblock %}
+
+{% block title %}Pro Dashboard{% endblock %}
+
+{% block notification %}
+{% if policy %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Terms and Conditions updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Pro Dashboard</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-store/">View Store</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto">
+    <br>
+    <h2>Settings</h2>
+    <br>
+    <div class="row menu-bar">
+        <div class="col-xl-1 col-sm-3"><a href="/pro-settings/">Store</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-payments/">Payment</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-branding/">Branding</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-social/">Social</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-policies/">Policies</a></div>
+        <div class="col-xl-1 col-sm-3"><a href="/pro-membership/">Membership</a></div>
+    </div>
+    <br>
+</div>
+
+<div class="container">
+    <h2>Add Coupon</h2>
+    <form action="/add-coupon/" method="POST">
+
+        <p><strong>Coupon Code</strong></p>
+        <input type="text" class="form-control my-3" placeholder="Coupon Code" name="coupon-code">
+
+        <p><strong>Coupon description</strong></p>
+        <textarea type="text" class="form-control my-3" placeholder="Coupon description" name="coupon-description"></textarea>
+
+        <h4 class="my-3"><strong>General Permissions</strong></h4>
+
+        <p><strong>Discount Type</strong></p>
+        <select class="form-select" name="discount-type">
+            <option value="Fixed Discount">Fixed Discount</option>
+            <option value="Percentage Discount">Percentage Discount</option>
+        </select>
+
+        <div class="form-check my-4">
+            <input class="form-check-input" type="checkbox" id="apply-to-all-products" name="apply-to-all-products">
+            <label class="form-check-label" for="apply-to-all-products">
+                Apply to All Products
+            </label>
+        </div>
+
+        <p><strong>Coupon Amount</strong></p>
+        <input type="text" class="form-control my-3" placeholder="Coupon Amount" name="coupon-amount">
+
+        <div class="form-check my-4">
+            <input class="form-check-input" type="checkbox" id="allow-free-shipping" name="allow-free-shipping">
+            <label class="form-check-label" for="allow-free-shipping">
+                Allow free shipping
+            </label>
+        </div>
+
+        <p><strong>Coupon Expiry Date</strong></p>
+        <input type="date" class="form-control" placeholder="DD/MM/YYYY" name="coupon-expiry-date">
+
+        <h4 class="my-3"><strong>Usage Restrictions</strong></h4>
+
+        <p><strong>Minimum Spend</strong></p>
+        <input type="text" class="form-control my-3" placeholder="Minimum spend" name="minimum-spend">
+
+        <p><strong>Maximum Spend</strong></p>
+        <input type="text" class="form-control" placeholder="Maximum spend" name="maximum-spend">
+
+        <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" id="individual-use-only" name="individual-use-only">
+            <label class="form-check-label" for="individual-use-only">
+                <strong>Individual use only</strong>
+            </label>
+        </div>
+
+        <p class="comment">Check this option if this coupon can not be used in conjunction with other coupons</p>
+
+        <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" id="exclude-sale-items" name="exclude-sale-items">
+            <label class="form-check-label" for="exclude-sale-items">
+                <strong>Exclude Sale Items</strong>
+            </label>
+        </div>
+        <p class="comment">Check this box if the coupon should not apply to items on sale. Per-item coupons will only work if the item is not on sale. Per-cart coupons will only work if there are no sale items in the cart.</p>
+
+        <p><strong>Email Restrictions</strong></p>
+        <input type="text" class="form-control" placeholder="No restrictions" name="email-restrictions">
+        <p class="comment">List of allowed emails to check against the customer's billing email when an order is placed. Separate email addresses with commas.</p>
+
+        <h4 class="mb-3"><strong>Usage Limits</strong></h4>
+
+        <p><strong>Usage limit per coupon</strong></p>
+        <input type="text" class="form-control mb-3" placeholder="Unlimited Usage" name="usage-limit-per-coupon">
+
+        <p><strong>Usage limit to x items</strong></p>
+        <input type="text" class="form-control mb-3" placeholder="Unlimited Usage" name="usage-limit-items">
+
+        <p><strong>Usage limit per user</strong></p>
+        <input type="text" class="form-control" placeholder="Unlimited Usage" name="usage-limit-per-user">
+
+        <button type="submit" class="btn btn-primary my-4">Add Coupon</button>
+    </form>
+</div>
+{% endblock %}

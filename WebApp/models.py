@@ -123,3 +123,26 @@ class Order(models.Model):
 
     def __str__(self):
         return self.id
+
+class Coupon(models.Model):
+    id = models.AutoField(primary_key=True)
+    code = models.CharField(max_length=20, default="")
+    description = models.TextField(default="")
+    discount_type = models.CharField(max_length=50, default="")
+    apply_to_all_products = models.BooleanField(default=False)
+    coupon_amount = models.CharField(max_length=10)
+    allow_free_shipping = models.BooleanField(default=False)
+    coupon_expiry = models.DateField(default=datetime.date.today)
+    minimum_spend = models.CharField(max_length=10, default="")
+    maximum_spend = models.CharField(max_length=10, default="")
+    individual_use_only = models.BooleanField(default=False)
+    exclude_sale_item = models.BooleanField(default=False)
+    restricted_emails = models.CharField(max_length=500, default="")
+    usage_limit_per_coupon = models.IntegerField(default=100)
+    usage_limit_item = models.IntegerField(default=100)
+    usage_limit_per_user = models.IntegerField(default=100)
+
+    seller_id = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.code

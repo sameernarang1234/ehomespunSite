@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
@@ -511,6 +511,63 @@ def proMembership(request):
     }
 
     return render(request,"proMembership.html", params)
+
+def proRatings(request):
+    return render(request,"proRatings.html")
+
+def proRefunds(request):
+    return render(request,"proRefunds.html")
+
+def proCoupons(request):
+    return render(request,"proCoupons.html")
+
+def proAddCoupon(request):
+    coupon_added = False
+
+    if request.method == "POST":
+        coupon_code = request.POST.get("coupon-code")
+        coupon_description = request.POST.get("coupon-description")
+        discount_type = request.POST.get("discount-type")
+
+        apply_to_all_products_boolean = False
+        apply_to_all_products = request.POST.get("apply-to-all-products")
+        if apply_to_all_products == "on":
+            apply_to_all_products_boolean = True
+        else:
+            apply_to_all_products_boolean = False
+
+        coupon_amount = request.POST.get("coupon-amount")
+
+        allow_free_shipping_boolean = False
+        allow_free_shipping = request.POST.get("allow-free-shipping")
+        if allow_free_shipping == "on":
+            allow_free_shipping_boolean = True
+        else:
+            allow_free_shipping_boolean = False
+
+        coupon_expiry_date = request.POST.get("coupon-expiry-date")
+        day = int(coupon_expiry_date[0:2])
+        month = int(coupon_expiry_date[3:5])
+        year = int(coupon_expiry_date[6:])
+        coupon_expiry_date_formatted = date(year, month, day)
+
+        username = request.session["username"]
+        user = UserDatabase.objects.get(username=username)
+        seller_id = user.id
+
+        coupon = Coupon(
+            code=coupon_code,
+            description=coupon_description,
+            discount_type=discount_type,
+            apply_to_all_products=apply_to_all_products_boolean,
+            coupon_amount=coupon_amount,
+            allow_free_shipping=allow_free_shipping_boolean,
+        )
+
+    return render(request, 'addCoupon.html')
+
+def proStore(request):
+    return render(request, 'proStore.html')
 
 def categoryPage(request):
     category = request.GET.get('category')

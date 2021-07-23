@@ -1,0 +1,40 @@
+.main-heading {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.menu-bar {
+    background-color: black;
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.menu-bar div a {
+    text-decoration: none;
+    color: white;
+}
+
+.menu-bar div a:hover {
+    color: aqua;
+}
+
+.header-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.sub-header-container {
+    background-color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #8fae1b;
+}
+
+span {
+    color: red;
+}
+
+.membership-details {
+    text-align: justify;
+}
