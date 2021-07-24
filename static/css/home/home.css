@@ -1,6 +1,7 @@
 .seller-registration {
     display: flex;
     align-items: center;
+    margin-top: 50px;
 }
 .seller-registration div, .seller-registration img {
     width: 30%;
@@ -87,4 +88,19 @@
 
 .category-btn:hover {
     color: blue;
+}
+
+.product-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    height: 600px;
+    margin-top: 50px;
+}
+
+.product-image {
+    width: 250px;
+    margin-top: 70px;
 }

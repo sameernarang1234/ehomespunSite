@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/shop/shop.css' %}">
+{% endblock %}
+
+{% block title %}Shop{% endblock %}
+
+{% block body %}
+<div class="container main-shop-container">
+    <h1><strong>Shop</strong></h1>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="container-fluid product-container">
+                <img src="{{product.image1}}" alt="{{product.title}}" class="product-image">
+                <p><strong>{{product.name}}</strong></p>
+                <p>{{product.currency}}{{product.sale_price}}</p>
+                <button class="btn btn-primary">View Product</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="pages-container">
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{prev_page}}">
+        {% if prev_page != 0 %}
+        <button type="submit" class="btn btn-primary">PREV</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>PREV</button>
+        {% endif %}
+    </form>
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{next_page}}">
+        {% if next_page != 0 %}
+        <button type="submit" class="btn btn-primary">NEXT</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>NEXT</button>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+.main-shop-container {
+    text-align: center
+}
+
+.product-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    height: 600px;
+    margin-top: 50px;
+}
+
+.product-image {
+    width: 250px;
+    margin-top: 70px;
+}
+
+.pages-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.form-page {
+    margin-left: 20px;
+    margin-right: 20px;;
+}

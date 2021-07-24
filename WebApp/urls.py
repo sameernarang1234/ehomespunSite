@@ -37,4 +37,5 @@ urlpatterns = [
     path('add-coupon/', views.proAddCoupon, name='proAddCoupon'),
     path('pro-store/', views.proStore, name='proStore'),
     path('category/', views.categoryPage, name='categoryPage'),
+    path('shop/', views.shopPage, name='shopPage'),
 ]

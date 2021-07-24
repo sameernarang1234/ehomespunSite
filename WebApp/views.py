@@ -8,8 +8,21 @@ from datetime import date, timedelta
 # Create your views here.
 def homePage(request):
     categories = Category.objects.all()
+    allProducts = Product.objects.all()
+
+    products = []
+    count = 0
+    for product in allProducts:
+        if count > 4:
+            break
+        products.append(product)
+        count += 1
+    
+    print(products)
+    
     params = {
-        "categories": categories
+        "categories": categories,
+        "products": products
     }
     return render(request, 'home.html', params)
 
@@ -22,6 +35,7 @@ def handleSignup(request):
         inputEmail = request.POST.get('email')
         inputPassword = request.POST.get('password')
         isMerchantAccount = request.POST.get('isMerchantAccount')
+        signupRemember = request.POST.get('signup-remember')
 
         userType = ""
 
@@ -45,6 +59,10 @@ def handleSignup(request):
         if loggedInUser is not None:
             login(request, loggedInUser)
             request.session["username"] = inputUsername
+            if signupRemember == "on":
+                request.session.set_expiry(86400)
+            else:
+                request.session.set_expiry(0)
 
             if (userType == "BUYER"):
                 return redirect("userDashboard")
@@ -56,11 +74,16 @@ def loginUser(request):
     if request.method == "POST":
         inputUsername = request.POST.get("username")
         inputPassword = request.POST.get("password")
+        loginRemember = request.POST.get("login-remember")
         loggedInUser = authenticate(username=inputUsername, password=inputPassword)
 
         if loggedInUser is not None:
             login(request, loggedInUser)
             request.session["username"] = inputUsername
+            if loginRemember == "on":
+                request.session.set_expiry(86400)
+            else:
+                request.session.set_expiry(0)
 
             userDB = UserDatabase.objects.get(username=inputUsername)
             userType = userDB.user_type
@@ -73,6 +96,7 @@ def loginUser(request):
     return redirect("loginPage")
 
 def logoutUser(request):
+    del request.session["username"]
     logout(request)
     return redirect("homePage")
 
@@ -581,3 +605,37 @@ def categoryPage(request):
         'category': category
     }
     return render(request, 'categoryPage.html', params)
+
+def shopPage(request):
+    page = request.GET.get('page-number')
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+    
+    allProducts = Product.objects.all()
+
+    start_index = page_number * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+    
+    params = {
+        "products": products,
+        "next_page": next_page,
+        "prev_page": prev_page
+    }
+
+    return render(request, 'shop.html', params)

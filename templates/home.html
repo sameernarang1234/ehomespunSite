@@ -22,9 +22,20 @@
     <img src="../static/assets/image1.jpeg" alt="Registration-Image">
 </div>
 
-<h1 class="featuredHeading">Featured Products</h1>
-<div class="featured">
-    
+<h1 class="featuredHeading"><strong>Featured Products</strong></h1>
+<div class="featured-container container-fluid">
+    <div class="row">
+        {% for product in products %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="container-fluid product-container">
+                <img src="{{product.image1}}" alt="{{product.title}}" class="product-image">
+                <p><strong>{{product.name}}</strong></p>
+                <p>{{product.currency}}{{product.sale_price}}</p>
+                <button class="btn btn-primary">View Product</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 <h1 class="Heading">Check Out Our Latest Deals</h1>
 <div class="deals">
