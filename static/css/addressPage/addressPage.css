@@ -18,6 +18,12 @@
 .container-1, .container-2 {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.container-2 {
+    width: 60%;
 }
 
 .logout-btn {

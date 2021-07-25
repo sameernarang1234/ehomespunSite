@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/wishlistPage/wishlistPage.css' %}">
+{% endblock %}
+
+{% block title %}Shop{% endblock %}
+
+{% block notification %}
+{% if item_deleted %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Selected item has been deleted from Wishlist.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="container main-shop-container">
+    <h1><strong>Your Wishlist</strong></h1>
+    <div class="row">
+        {% for product in wishlist_items %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="container-fluid product-container">
+                <img src="{{product.product.image1}}" alt="{{product.product.title}}" class="product-image">
+                <p><strong>{{product.product.name}}</strong></p>
+                <p>{{product.product.currency}}{{product.product.sale_price}}</p>
+                <form action="/add-to-cart/" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{product.product.id}}">
+                    <button class="btn btn-primary">ADD TO CART</button>
+                </form>
+                <form action="/wishlist/" method="POST" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{product.product.id}}">
+                    <button class="btn btn-danger" type="submit">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="pages-container">
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{prev_page}}">
+        {% if prev_page != 0 %}
+        <button type="submit" class="btn btn-primary">PREV</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>PREV</button>
+        {% endif %}
+    </form>
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{next_page}}">
+        {% if next_page != 0 %}
+        <button type="submit" class="btn btn-primary">NEXT</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>NEXT</button>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

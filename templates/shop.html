@@ -17,7 +17,10 @@
                 <img src="{{product.image1}}" alt="{{product.title}}" class="product-image">
                 <p><strong>{{product.name}}</strong></p>
                 <p>{{product.currency}}{{product.sale_price}}</p>
-                <button class="btn btn-primary">View Product</button>
+                <form action="/product/" method="GET">
+                    <input type="hidden" name="product_id" value="{{product.id}}">
+                    <button class="btn btn-primary">View Product</button>
+                </form>
             </div>
         </div>
         {% endfor %}

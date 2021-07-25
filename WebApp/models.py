@@ -74,6 +74,7 @@ class Store(models.Model):
     membership_status = models.CharField(max_length=50, default="inactive")
     membership_type = models.CharField(max_length=100, default="")
     membership_start_date = models.DateField(default=datetime.date.today)
+    sales = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -92,7 +93,7 @@ class SellerPaymentDetail(models.Model):
     stripe_private_key = models.CharField(max_length=500, default="")
 
     def __str__(self):
-        return self.seller_id
+        return str(self.seller_id)
 
 class Shipping(models.Model):
     seller_id = models.IntegerField(primary_key=True, default=0)
@@ -112,6 +113,9 @@ class Shipping(models.Model):
     shipping_state = models.CharField(max_length=20, default="")
     shipping_postcode = models.CharField(max_length=10, default="")
 
+    def __str__(self):
+        return str(self.seller_id)
+
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
@@ -122,7 +126,7 @@ class Order(models.Model):
     price = models.CharField(max_length=10, default="")
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 class Coupon(models.Model):
     id = models.AutoField(primary_key=True)
@@ -146,3 +150,72 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+class UserComment(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.IntegerField(default=0)
+    username = models.CharField(default="", max_length=100)
+    comment = models.CharField(max_length=100, default="")
+
+    def __str__(self):
+        return str(self.product_id)
+
+class UserReview(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.product_id)
+
+class Cart(models.Model):
+    id = models.AutoField(primary_key=True)
+    buyer_id = models.IntegerField(default=0)
+    product_id = models.IntegerField(default=0)
+    product_quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.buyer_id)
+
+class Wishlist(models.Model):
+    id = models.AutoField(primary_key=True)
+    buyer_id = models.IntegerField(default=0)
+    product_id = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.buyer_id)
+
+class BuyerAddress(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(default=0)
+    first_name = models.CharField(max_length=50, default="")
+    last_name = models.CharField(max_length=50, default="")
+    company_name = models.CharField(max_length=50, default="")
+    country = models.CharField(max_length=20, default="")
+    address = models.CharField(max_length=500, default="")
+    city = models.CharField(max_length=50, default="")
+    state = models.CharField(max_length=50, default="")
+    postcode = models.CharField(max_length=50, default="")
+    phone = models.CharField(max_length=20, default="")
+    email = models.CharField(max_length=50, default="")
+
+    def __str__(self):
+        return self.first_name
+
+class BuyerBillingAddress(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(default=0)
+    first_name = models.CharField(max_length=50, default="")
+    last_name = models.CharField(max_length=50, default="")
+    company_name = models.CharField(max_length=50, default="")
+    country = models.CharField(max_length=20, default="")
+    address = models.CharField(max_length=500, default="")
+    city = models.CharField(max_length=50, default="")
+    state = models.CharField(max_length=50, default="")
+    postcode = models.CharField(max_length=50, default="")
+    phone = models.CharField(max_length=20, default="")
+    email = models.CharField(max_length=50, default="")
+
+    def __str__(self):
+        return self.first_name
+

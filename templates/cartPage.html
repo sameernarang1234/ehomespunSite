@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/cartPage/cartPage.css' %}">
+{% endblock %}
+
+{% block title %}Shop{% endblock %}
+
+{% block notification %}
+{% if item_deleted %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Selected item has been deleted from Cart.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="container main-shop-container">
+    <h1><strong>Your Shopping Cart</strong></h1>
+    <form class="mt-3">
+        <input type="hidden" name="cart_items" value="{{cart_items}}">
+        <button type="submit" class="btn btn-primary">CHECKOUT ALL PRODUCTS</button>
+    </form>
+    <div class="row">
+        {% for product in cart_items %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="container-fluid product-container">
+                <img src="{{product.product.image1}}" alt="{{product.product.title}}" class="product-image">
+                <p><strong>{{product.product.name}}</strong></p>
+                <p>{{product.product.currency}}{{product.product.sale_price}}</p>
+                <p>Quantity: {{product.quantity}}</p>
+                <form action="/product/" method="GET">
+                    <input type="hidden" name="product_id" value="{{product.product.id}}">
+                    <button class="btn btn-primary">View Product</button>
+                </form>
+                <form action="/checkout/" method="POST" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{product.product.id}}">
+                    <input type="hidden" name="quantity" value="{{product.quantity}}">
+                    <button class="btn btn-success" type="submit">Checkout</button>
+                </form>
+                <form action="/cart/" method="POST" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{product.product.id}}">
+                    <button class="btn btn-danger" type="submit">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="pages-container">
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{prev_page}}">
+        {% if prev_page != 0 %}
+        <button type="submit" class="btn btn-primary">PREV</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>PREV</button>
+        {% endif %}
+    </form>
+    <form class="form-page">
+        <input type="hidden" name="page-number" value="{{next_page}}">
+        {% if next_page != 0 %}
+        <button type="submit" class="btn btn-primary">NEXT</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary disabled" disabled>NEXT</button>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

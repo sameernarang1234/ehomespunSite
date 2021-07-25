@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
@@ -96,17 +97,35 @@ def loginUser(request):
     return redirect("loginPage")
 
 def logoutUser(request):
-    del request.session["username"]
     logout(request)
+    try:
+        del request.session["username"]
+    except:
+        print()
     return redirect("homePage")
 
 def dashboard(request):
-    username = request.session["username"]
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
     user = UserDatabase.objects.get(username=username)
-    if user.user_type == "MERCHANT":
+    userType = user.user_type
+
+    if userType == "MERCHANT":
         return redirect("proDashboard")
     else:
         return redirect("userDashboard")
+
+def userDashboard(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    return render(request, "userDashboard.html")
 
 def supportPage(request):
     return render(request, 'support.html')
@@ -148,7 +167,11 @@ def becomeSellerPage(request):
     return render(request, 'becomeSellerPage.html')
 
 def proDashboard(request):
-    username = request.session["username"]
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
 
@@ -184,7 +207,12 @@ def proDashboard(request):
     return render(request, 'proDashboard.html', params)
 
 def proProducts(request):
-    user = UserDatabase.objects.get(username=request.session["username"])
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    user = UserDatabase.objects.get(username=username)
     user_id = user.id
     products = Product.objects.filter(seller_id=user_id)
     params = {
@@ -193,6 +221,12 @@ def proProducts(request):
     return render(request, 'proProducts.html', params)
 
 def addProduct(request):
+
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
 
     product_saved = False
 
@@ -258,9 +292,21 @@ def addProduct(request):
     return render(request, 'addProduct.html', params)
 
 def proOrders(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     return render(request, 'proOrders.html')
 
 def proSettings(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     settings_updated = False
 
     if request.method == "POST":
@@ -305,6 +351,11 @@ def proSettings(request):
     return render(request, 'proSettings.html', params)
 
 def proPayments(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
 
     paymentStatus = False
 
@@ -329,6 +380,12 @@ def proPayments(request):
     return render(request, 'proPayments.html', params)
 
 def proBranding(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     images_uploaded = False
 
     if request.method == "POST":
@@ -361,6 +418,12 @@ def proBranding(request):
     return render(request, 'proBranding.html', params)
 
 def proShipping(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     shipping_enabled = False
 
     if request.method == "POST":
@@ -428,6 +491,12 @@ def proShipping(request):
     return render(request, 'proShipping.html', params)
 
 def proSocial(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     social_handles_updated = False
 
     if request.method == 'POST':
@@ -465,6 +534,12 @@ def proSocial(request):
     return render(request,"proSocial.html", params)
 
 def proPolicy(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     policy_updated = False
 
     if request.method == "POST":
@@ -487,6 +562,12 @@ def proPolicy(request):
     return render(request,"proPolicy.html", params)
 
 def proMembership(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     is_member = False
     username = request.session["username"]
     user = UserDatabase.objects.get(username=username)
@@ -537,15 +618,36 @@ def proMembership(request):
     return render(request,"proMembership.html", params)
 
 def proRatings(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
     return render(request,"proRatings.html")
 
 def proRefunds(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
     return render(request,"proRefunds.html")
 
 def proCoupons(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
     return render(request,"proCoupons.html")
 
 def proAddCoupon(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
     coupon_added = False
 
     if request.method == "POST":
@@ -591,9 +693,15 @@ def proAddCoupon(request):
     return render(request, 'addCoupon.html')
 
 def proStore(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
     return render(request, 'proStore.html')
 
 def categoryPage(request):
+
     category = request.GET.get('category')
     categoryDB = Category.objects.get(name=category)
     categoryID = categoryDB.id
@@ -622,7 +730,7 @@ def shopPage(request):
     
     allProducts = Product.objects.all()
 
-    start_index = page_number * 2
+    start_index = (page_number - 1) * 2
     end_index = start_index + 2
 
     products = []
@@ -639,3 +747,236 @@ def shopPage(request):
     }
 
     return render(request, 'shop.html', params)
+
+def productPage(request):
+    product_id = request.GET.get('product_id')
+    
+    product = Product.objects.get(id=product_id)
+    seller_id = product.seller_id
+    
+    seller = UserDatabase.objects.get(id=seller_id)
+
+    store = Store.objects.get(seller_id=seller_id)
+
+    category = product.category_id
+    related_products = Product.objects.filter(category_id=category)
+
+    ratings = UserReview.objects.filter(product_id=product_id)
+
+    total_rating = 0.0
+    count = 0
+    for rating in ratings:
+        total_rating += float(rating.rating)
+        count += 1
+    if count != 0:
+        total_rating /= float(count)
+    
+    shipping = Shipping.objects.filter(seller_id=seller_id)
+
+    print(store.store_banner)
+
+    comments = UserComment.objects.filter(product_id=product_id)
+
+    params = {
+        "product": product,
+        "seller": seller,
+        "store": store,
+        "related_products": related_products,
+        "total_rating": total_rating,
+        "rating_count": count,
+        "comments": comments,
+        "shipping": shipping
+    }
+
+    return render(request, "product.html", params)
+
+def addToCart(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    if request.method == "POST":
+        quantity = request.POST.get("quantity")
+        if quantity is None:
+            quantity = 1
+        product_id = request.POST.get("product_id")
+        
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+
+        try:
+            presentCart = Cart.objects.get(buyer_id=buyer_id, product_id=product_id)
+        except:
+            presentCart = None
+
+        if presentCart is None:
+            cart = Cart(
+                buyer_id=buyer_id,
+                product_id=product_id,
+                product_quantity=quantity
+            )
+            cart.save()
+        else:
+            qty = presentCart.product_quantity
+            qty += 1
+            presentCart.product_quantity = qty
+            presentCart.save()
+
+    return redirect("cartPage")
+
+def cartPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    
+    item_deleted = False
+    if request.method == "POST":
+        product_id = request.POST.get("product_id")
+        delete_cart_item = Cart.objects.get(buyer_id=buyer_id, product_id=product_id)
+        delete_cart_item.delete()
+        item_deleted = True
+
+    page = request.GET.get('page-number')
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    allProducts = []
+
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        product = Product.objects.get(id=product_id)
+        productData = {
+            "product": product,
+            "quantity": cart_item.product_quantity
+        }
+        allProducts.append(productData)
+
+    start_index = (page_number - 1) * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+    
+    params = {
+        "cart_items": products,
+        "next_page": next_page,
+        "prev_page": prev_page,
+        "item_deleted": item_deleted
+    }
+
+    return render(request, 'cartPage.html', params)
+
+def wishlist(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    item_deleted = False
+    
+    if request.method == "POST":
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        product_id = request.POST.get("product_id")
+
+        wishlistItem = Wishlist.objects.get(buyer_id=buyer_id, product_id=product_id)
+        wishlistItem.delete()
+
+        item_deleted = True
+
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+
+    page = request.GET.get('page-number')
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+
+    wishlist_items = Wishlist.objects.filter(buyer_id=buyer_id)
+
+    allProducts = []
+
+    for wishlist_item in wishlist_items:
+        product_id = wishlist_item.product_id
+        product = Product.objects.get(id=product_id)
+        productData = {
+            "product": product
+        }
+        allProducts.append(productData)
+
+    start_index = (page_number - 1) * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+    
+    params = {
+        "wishlist_items": products,
+        "next_page": next_page,
+        "prev_page": prev_page,
+        "item_deleted": item_deleted
+    }
+
+    return render(request, 'wishlistPage.html', params)
+
+def addToWishlist(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    if request.method == "POST":
+        product_id = request.POST.get("product_id")
+        
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+
+        try:
+            presentCart = Wishlist.objects.get(buyer_id=buyer_id, product_id=product_id)
+        except:
+            presentCart = None
+
+        if presentCart is None:
+            wishlist = Wishlist(
+                buyer_id=buyer_id,
+                product_id=product_id
+            )
+            wishlist.save()
+    
+    return redirect("wishlist")
