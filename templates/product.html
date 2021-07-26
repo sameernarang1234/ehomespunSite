@@ -101,30 +101,34 @@
         </div>
         {% endfor %}
     </div>
-    <div class="container-fluid product-description-container">
-        <h3><strong>Description</strong></h3>
-        <p>{{product.description}}</p>
-        <h3><strong>User Reviews</strong></h3>
-        <p>{{total_rating}} out of 5</p>
-        {% if rating_count == 0 %}
-        <p>There are no reviews yet</p>
-        {% endif %}
-        <h3><strong>Comments</strong></h3>
-        {% if not comments %}
-        <p>There are no comments yet</p>
-        {% endif %}
-        {% for comment in comments %}
-        <p><strong>{{comment.username}}</strong></p>
-        <p>{{comment.comment}}</p>
-        {% endfor %}
-        {% if user.is_authenticated %}
-        <p><strong>Your Feedback</strong></p>
-        <form>
-            <textarea type="text" name="comment" placeholder="Comment..." class="text-area"></textarea><br>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        {% endif %}
-    </div>
+	
+	<div class="container-fluid product-description-container">
+		<div class="container right-align-container">
+			<h3><strong>Description</strong></h3>
+			<p>{{product.description}}</p>
+			<h3><strong>User Reviews</strong></h3>
+			<p>{{total_rating}} out of 5</p>
+			{% if rating_count == 0 %}
+			<p>There are no reviews yet</p>
+			{% endif %}
+			<h3><strong>Comments</strong></h3>
+			{% if not comments %}
+			<p>There are no comments yet</p>
+			{% endif %}
+			{% for comment in comments %}
+			<p><strong>{{comment.username}}</strong></p>
+			<p>{{comment.comment}}</p>
+			{% endfor %}
+			{% if user.is_authenticated %}
+			<p><strong>Your Feedback</strong></p>
+			<form>
+				<textarea type="text" name="comment" placeholder="Comment..." class="text-area"></textarea><br>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+			{% endif %}
+		</div>
+	</div>
+
     <div class="product-description-container container-fluid">
         <h1>Shipping Info</h1>
         <div class="row">

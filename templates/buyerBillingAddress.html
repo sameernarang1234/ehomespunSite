@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/buyerBillingAddress/buyerBillingAddress.css' %}">
+{% endblock %}
+
+{% block title %}Addresses{% endblock %}
+
+{% block notification %}
+{% if address_updated %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Address successfully updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Addresses</h1>
+<div class="main-container">
+    <div class="container-1">
+        <div class="container">
+            <a href="/user-dashboard/" class="dashboard-navigation">Dashboard</a>
+            <a href="/orders/" class="dashboard-navigation">Orders</a>
+            <a href="/address/" class="dashboard-navigation">Addresses</a>
+            <a href="/payment-method/" class="dashboard-navigation">Payment methods</a>
+            <a href="/account/" class="dashboard-navigation">Account details</a>
+            <a href="/become-seller/" class="dashboard-navigation">Become a seller</a>
+            <a href="/logout/" class="dashboard-navigation">Logout</a>
+        </div>
+    </div>
+    <div class="container-2">
+        <div class="container-fluid">
+            <form action="/buyer-billing-address/" method="POST">
+		{% csrf_token %}
+                <p class="mt-4">First Name</p>
+                <input type="text" class="form-control" name="first_name">
+
+                <p class="mt-4">Last Name</p>
+                <input type="text" class="form-control" name="last_name">
+
+                <p class="mt-4">Company Name</p>
+                <input type="text" class="form-control" name="company_name">
+
+                <p class="mt-4">Country</p>
+                <select class="form-control" name="country">
+                    <option value="United States (US)">United States (US)</option>
+                    <option value="United Kingdon (UK)">United Kingdon (UK)</option>
+                    <option value="Canada">Canada</option>
+                </select>
+
+                <p class="mt-4">Address</p>
+                <textarea type="text" class="form-control" name="address"></textarea>
+
+                <p class="mt-4">City</p>
+                <input type="text" class="form-control" name="city">
+
+                <p class="mt-4">State</p>
+                <select class="form-control" name="state">
+                    {% for state in states %}
+                    <option value="{{state.name}}">{{state.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <p class="mt-4">Postal Code</p>
+                <input type="text" class="form-control" name="postcode">
+
+                <p class="mt-4">Phone</p>
+                <input type="text" class="form-control" name="phone">
+
+                <p class="mt-4">Email</p>
+                <input type="email" class="form-control" name="email">
+
+                <button type="submit" class="btn btn-primary my-3">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

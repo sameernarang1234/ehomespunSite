@@ -219,3 +219,13 @@ class BuyerBillingAddress(models.Model):
     def __str__(self):
         return self.first_name
 
+class BuyerPaymentDetail(models.Model):
+    id = models.AutoField(primary_key=True)
+    buyer_id = models.IntegerField(default=0)
+    card_number = models.CharField(max_length=30, default="")
+    expiry = models.CharField(max_length=10, default="")
+    cvv = models.CharField(max_length=5, default="")
+
+    def __str__(self):
+        return str(self.buyer_id)
+

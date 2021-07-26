@@ -71,6 +71,10 @@ span {
     margin-top: 50px;
 }
 
+.right-align-container {
+	text-align: left;
+}
+
 .product-image {
     width: 250px;
     margin-top: 70px;

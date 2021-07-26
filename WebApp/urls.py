@@ -35,6 +35,7 @@ urlpatterns = [
     path('pro-coupons/', views.proCoupons, name='proCoupons'),
     path('add-coupon/', views.proAddCoupon, name='proAddCoupon'),
     path('pro-store/', views.proStore, name='proStore'),
+    path("pro-update-product/", views.proUpdateProduct, name="proUpdateProduct"),
     path('category/', views.categoryPage, name='categoryPage'),
     path('shop/', views.shopPage, name='shopPage'),
     path('product/', views.productPage, name='productPage'),
@@ -42,4 +43,6 @@ urlpatterns = [
     path('add-to-cart/', views.addToCart, name='addToCart'),
     path('wishlist/', views.wishlist, name='wishlist'),
     path('add-to-wishlist/', views.addToWishlist, name='addToWishlist'),
+    path('buyer-shipping-address/', views.buyerShippingAddress, name='buyerShippingAddress'),
+    path('buyer-billing-address/', views.buyerBillingAddress, name='buyerBillingAddress'),
 ]

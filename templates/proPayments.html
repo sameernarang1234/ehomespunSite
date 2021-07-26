@@ -51,18 +51,19 @@
     </div>
     <br>
     <form action="/pro-payments/" method="POST">
+		{% csrf_token %}
         <h3>PayPal Account details</h3>
         <p><strong>Client ID <span>*</span></strong></p>
-        <input class="form-control" name="paypal_client_id" type="password">
+		<input placeholder="{{payment.paypal_client_id}}" class="form-control" name="paypal_client_id" type="password">
         <br>
         
         <h3>Stripe Account Details</h3>
         <p><strong>Account Public Key <span>*</span></strong></p>
-        <input class="form-control" name="stripe_public_key" type="password">
+		<input class="form-control" placeholder="{{payment.stripe_public_key}}" name="stripe_public_key" type="password">
         <br>
 
         <p><strong>Account Private Key <span>*</span></strong></p>
-        <input class="form-control" name="stripe_private_key" type="password">
+		<input class="form-control" name="stripe_private_key" placeholder="{{payment.stripe_private_key}}" type="password">
 
         <button class="btn btn-primary my-4" type="submit">Save Changes</button>
     </form>

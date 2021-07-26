@@ -5,16 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/proCoupons/proCoupons.css' %}">
 {% endblock %}
 
-{% block title %}Pro Dashboard{% endblock %}
-
-{% block notification %}
-{% if policy %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Success!</strong> Terms and Conditions updated.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
-{% endblock %}
+{% block title %}Coupons{% endblock %}
 
 {% block body %}
 <h1 class="main-heading">Pro Dashboard</h1>
@@ -54,7 +45,17 @@
 </div>
 
 <div class="container">
-    <h2>No refunds found.</h2>
+    <h2>Coupons</h2>
+	{% for coupon in coupons %}
+	<div class="container">
+		<p><strong>Coupon Code</strong></p>
+		<p>{{coupon.code}}</p>
+		<form action="/add-coupon/" method="GET">
+			<input type="hidden" name="coupon_id" value="{{coupon.id}}">
+			<button type="submit" class="btn btn-primary my-3">View</button>
+		</form>
+	</div>
+	{% endfor %}
     <form action="/add-coupon/" method="GET">
         <button type="submit" class="btn btn-primary mb-4">Add Coupon</button>
     </form>

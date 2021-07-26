@@ -278,40 +278,12 @@ def proProducts(request):
     except:
         logout(request)
         return redirect("loginPage")
-
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
-    allProducts = Product.objects.filter(seller_id=user_id)
-    
-    page = request.GET.get('page-number')
-    page_number = 0
-    if page == None:
-        page_number = 1
-    else:
-        page_number = int(page)
-    
-    prev_page = 0
-    next_page = 0
-
-    if page_number != 1:
-        prev_page = page_number - 1
-    
-    start_index = (page_number - 1) * 2
-    end_index = start_index + 2
-
-    products = []
-    if end_index >= len(allProducts):
-        products = allProducts[start_index:]
-    else:
-        products = allProducts[start_index:end_index]
-        next_page = page_number + 1
-    
+    products = Product.objects.filter(seller_id=user_id)
     params = {
-        "products": products,
-        "next_page": next_page,
-        "prev_page": prev_page
+        "products": products
     }
-
     return render(request, 'proProducts.html', params)
 
 def addProduct(request):
@@ -385,124 +357,6 @@ def addProduct(request):
     }
     return render(request, 'addProduct.html', params)
 
-def proUpdateProduct(request):
-    try:
-        username = request.session["username"]
-    except:
-        logout(request)
-        return redirect("loginPage")
-    
-    product_modified = False
-    if request.method == "POST":
-        
-        product_id = request.POST.get("product_id")
-
-        product_name = request.POST.get("product_name")
-        product_description = request.POST.get("product_description")
-        product_short_description = request.POST.get("product_short_description")
-        category_name = request.POST.get("categoryName")
-
-        category = Category.objects.get(name=category_name)
-        category_id = category.id
-        
-        try:
-            image1 = request.FILES["image1_file"]
-            fs1 = FileSystemStorage()
-            filename1 = fs1.save(image1.name, image1)
-            image1_url = fs1.url(filename1)
-        except:
-            image1_url = ""
-
-        try:
-            image2 = request.FILES["image2_file"]
-            fs2 = FileSystemStorage()
-            filename2 = fs2.save(image2.name, image2)
-            image2_url = fs2.url(filename2)
-        except:
-            image2_url = ""
-
-        try:
-            image3 = request.FILES["image3_file"]
-            fs3 = FileSystemStorage()
-            filename3 = fs3.save(image3.name, image3)
-            image3_url = fs3.url(filename3)
-        except:
-            image3_url = ""
-
-        product_type = request.POST.get("product-type")
-        regular_price = request.POST.get("regular-price")
-        sale_price = request.POST.get("sale-price")
-        tax_status = request.POST.get("tax-status")
-        tax_class = request.POST.get("tax-class")
-        stock_status = request.POST.get("stock-status")
-
-        seller = request.session["username"]
-        user = UserDatabase.objects.get(username=seller)
-        seller_id = user.id
-
-        product = Product.objects.get(id=product_id)
-
-        if product_name != "":
-            product.name = product_name
-        
-        if product_description != "":
-            product.description = product_description
-
-        if product_short_description != "":
-            product.short_description = product_short_description
-
-        if category_id != "":
-            product.category_id = category_id
-        
-        if image1_url != "":
-            product.image1 = image1_url
-        
-        if image2_url != "":
-            product.image2 = image2
-        
-        if image3_url != "":
-            product.image3 = image3_url
-        
-        if product_type != "":
-            product.type = product_type
-        
-        if regular_price != "":
-            product.price = regular_price
-        
-        if sale_price != "":
-            product.sale_price = sale_price
-        
-        if tax_status != "":
-            product.tax_status = tax_status
-        
-        if tax_class != "":
-            product.tax_class = tax_class
-        
-        if stock_status != "":
-            product.stock_status = stock_status
-        
-        product.save()
-        product_modified = True
-
-        return redirect("proProducts")
-
-    user = UserDatabase.objects.get(username=username)
-    seller_id = user.id
-
-    product_id = request.GET.get("product_id")
-    product = Product.objects.get(id=product_id, seller_id=seller_id)
-    
-    categories = Category.objects.all()
-
-    params = {
-                "seller_id": seller_id,
-                "product": product,
-                "product_modified": product_modified,
-                "categories": categories
-            }
-
-    return render(request, "proUpdateProduct.html", params)
-
 def proOrders(request):
     try:
         username = request.session["username"]
@@ -536,71 +390,29 @@ def proSettings(request):
         username = request.session["username"]
         user = UserDatabase.objects.get(username=username)
         seller_id = user.id
-        
-        try:
-            prevStore = Store.objects.get(seller_id=seller_id)
-        except:
-            prevStore = None
 
-        if prevStore is None:
-            store = Store(
-                name=store_name,
-                description=store_description,
-                seller_info=seller_info,
-                url=store_url,
-                phone=store_phone,
-                country=store_country,
-                address=store_address,
-                city=store_city,
-                state=store_state,
-                postal_code=store_post_code,
-                seller_id=seller_id
-            )
-            store.save()
-        else:
-            if store_name != "":
-                prevStore.name = store_name
-            
-            if store_description != "":
-                prevStore.description = store_description
-            
-            if seller_info != "":
-                prevStore.seller_info = seller_info
-            
-            if store_url != "":
-                prevStore.url = store_url
-            
-            if store_phone != "":
-                prevStore.phone = store_phone
-            
-            if store_country != "":
-                prevStore.country = store_country
-            
-            if store_address != "":
-                prevStore.address = store_address
-            
-            if store_city != "":
-                prevStore.city = store_city
-            
-            if store_state != "":
-                prevStore.state = store_state
-            
-            if store_post_code != "":
-                prevStore.postal_code = store_post_code
-
-            prevStore.save()
+        store = Store(
+            name=store_name,
+            description=store_description,
+            seller_info=seller_info,
+            url=store_url,
+            phone=store_phone,
+            country=store_country,
+            address=store_address,
+            city=store_city,
+            state=store_state,
+            postal_code=store_post_code,
+            seller_id=seller_id
+        )
+        store.save()
 
         settings_updated = True
-    
-    user = UserDatabase.objects.get(username=username)
-    seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
+
 
     states = StoreState.objects.all()
     params = {
         "states": states,
-        "settings": settings_updated,
-        "store": store
+        "settings": settings_updated
     }
     return render(request, 'proSettings.html', params)
 
@@ -613,49 +425,22 @@ def proPayments(request):
 
     paymentStatus = False
 
-    seller = UserDatabase.objects.get(username=username)
-    seller_id = seller.id
-
     if request.method == "POST":
         paypal_client_id = request.POST.get("paypal_client_id")
         stripe_public_key = request.POST.get("stripe_public_key")
         stripe_private_key = request.POST.get("stripe_private_key")
 
-        try:
-            prevPayment = SellerPaymentDetail.objects.get(seller_id=seller_id)
-        except:
-            prevPayment = None
-
-        if prevPayment is None:
-            payment = SellerPaymentDetail(
-                seller_id = seller_id,
-                paypal_client_id=paypal_client_id,
-                stripe_public_key=stripe_public_key,
-                stripe_private_key=stripe_private_key
-            )
-            payment.save()
-        else:
-            if paypal_client_id != "":
-                prevPayment.paypal_client_id = paypal_client_id
-
-            if stripe_public_key != "":
-                prevPayment.stripe_public_key = stripe_public_key
-
-            if stripe_private_key != "":
-                prevPayment.stripe_private_key = stripe_private_key
-
-            prevPayment.save()
+        payment = SellerPaymentDetail(
+            paypal_client_id=paypal_client_id,
+            stripe_public_key=stripe_public_key,
+            stripe_private_key=stripe_private_key
+        )
+        payment.save()
 
         paymentStatus = True
     
-    try:
-        payment = SellerPaymentDetail.objects.get(seller_id=seller_id)
-    except:
-        payment = None
-
     params = {
-        "paymentStatus": paymentStatus,
-        "payment": payment
+        "paymentStatus": paymentStatus
     }
 
     return render(request, 'proPayments.html', params)
@@ -744,78 +529,29 @@ def proShipping(request):
             shipping_state = store.state
             shipping_postcode = store.postal_code
         
-        try:
-            prevShipping = Shipping.objects.get(seller_id=user_id)
-        except:
-            prevShipping = None
-
-        if prevShipping is None:
-
-            shipping = Shipping(
-                seller_id=user_id,
-                shipping_type=shipping_type,
-                national_shipping_fee=national_shipping_fee,
-                national_free_shipping_fee=national_free_shipping_fee,
-                national_free_shipping_enabled=national_free_shipping_enabled,
-                disable_national_shipping=disable_national_shipping,
-                international_shipping_fee=international_shipping_fee,
-                international_free_shipping_fee=international_free_shipping_fee,
-                international_free_shipping_enabled=international_free_shipping_enabled,
-                disable_international_shipping=disable_international_shipping,
-                product_handling_fee=product_handling_fee,
-                shipping_country=shipping_country,
-                shipping_address=shipping_address,
-                shipping_city=shipping_city,
-                shipping_state=shipping_state,
-                shipping_postcode=shipping_postcode
-            )
-            shipping.save()
-        else:
-            if shipping_type != "":
-                prevShipping.shipping_type = shipping_type
-
-            if national_shipping_fee != "":
-                prevShipping.national_shipping_fee = national_shipping_fee
-
-            if national_free_shipping_fee != "":
-                prevShipping.national_free_shipping_fee = national_free_shipping_fee
-
-            if international_shipping_fee != "":
-                prevShipping.international_shipping_fee = international_shipping_fee
-
-            if international_free_shipping_fee != "":
-                prevShipping.international_free_shipping_fee = international_free_shipping_fee
-
-            if product_handling_fee != "":
-                prevShipping.product_handling_fee = product_handling_fee
-
-            if shipping_country != "":
-                prevShipping.shipping_country = shipping_country
-
-            if shipping_address != "":
-                prevShipping.shipping_address = shipping_address
-
-            if shipping_city != "":
-                prevShipping.shipping_city = shipping_city
-
-            if shipping_state != "":
-                prevShipping.shipping_state = shipping_state
-
-            if shipping_postcode != "":
-                prevShipping.shipping_postcode = shipping_postcode
-
-            prevShipping.save()
+        shipping = Shipping(
+            shipping_type=shipping_type,
+            national_shipping_fee=national_shipping_fee,
+            national_free_shipping_fee=national_free_shipping_fee,
+            national_free_shipping_enabled=national_free_shipping_enabled,
+            disable_national_shipping=disable_national_shipping,
+            international_shipping_fee=international_shipping_fee,
+            international_free_shipping_fee=international_free_shipping_fee,
+            international_free_shipping_enabled=international_free_shipping_enabled,
+            disable_international_shipping=disable_international_shipping,
+            product_handling_fee=product_handling_fee,
+            shipping_country=shipping_country,
+            shipping_address=shipping_address,
+            shipping_city=shipping_city,
+            shipping_state=shipping_state,
+            shipping_postcode=shipping_postcode
+        )
+        shipping.save()
 
         shipping_enabled = True
-
-    user = UserDatabase.objects.get(username=username)
-    seller_id = user.id
-
-    shipping = Shipping.objects.get(seller_id=seller_id)
     
     params = {
-        "shipping_enabled": shipping_enabled,
-        "shipping": shipping
+        "shipping_enabled": shipping_enabled
     }
 
     return render(request, 'proShipping.html', params)
@@ -857,13 +593,8 @@ def proSocial(request):
 
         social_handles_updated = True
     
-    user = UserDatabase.objects.get(username=username)
-    seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
-
     params = {
-        "social": social_handles_updated,
-        "store": store
+        "social": social_handles_updated
     }
 
     return render(request,"proSocial.html", params)
@@ -890,13 +621,8 @@ def proPolicy(request):
 
         policy_updated = True
     
-    user = UserDatabase.objects.get(username=username)
-    seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
-
     params = {
-        "policy": policy_updated,
-        "store": store
+        "policy": policy_updated
     }
 
     return render(request,"proPolicy.html", params)
@@ -979,16 +705,7 @@ def proCoupons(request):
     except:
         logout(request)
         return redirect("loginPage")
-
-    user = UserDatabase.objects.get(username=username)
-    user_id = user.id
-    coupons = Coupon.objects.filter(seller_id=user_id)
-
-    params = {
-                "coupons": coupons
-            }
-
-    return render(request,"proCoupons.html", params)
+    return render(request,"proCoupons.html")
 
 def proAddCoupon(request):
     try:
@@ -1021,128 +738,25 @@ def proAddCoupon(request):
             allow_free_shipping_boolean = False
 
         coupon_expiry_date = request.POST.get("coupon-expiry-date")
-
-        minimum_spend = request.POST.get("minimum-spend")
-
-        maximum_spend = request.POST.get("maximum-spend")
-
-        individual_use_only_formatted = False
-        individual_use_only = request.POST.get("individual-use-only")
-        if individual_use_only == "on":
-            individual_use_only_formatted = True
-
-        exclude_sale_items_formatted = False
-        exclude_sale_items = request.POST.get("exclude-sale-items")
-        if exclude_sale_items == "on":
-            exclude_sale_items_formatted = True
-
-        try:
-            day = int(coupon_expiry_date[0:2])
-            month = int(coupon_expiry_date[3:5])
-            year = int(coupon_expiry_date[6:])
-            coupon_expiry_date_formatted = date(year, month, day)
-        except:
-            coupon_expiry_date_formatted = date.today()
-        
-        email_restrictions = request.POST.get("email-restrictions")
-
-        usage_limit_per_coupon = request.POST.get("usage-limit-per-coupon")
-        if usage_limit_per_coupon == "":
-            usage_limit_per_coupon_formatted = 1
-        else:
-            usage_limit_per_coupon_formatted = int(usage_limit_per_coupon)
-
-        usage_limit_per_item = request.POST.get("usage-limit-per-item")
-        if usage_limit_per_item == "":
-            usage_limit_per_item_formatted = 1
-        else:
-            usage_limit_per_item_formatted = int(usage_limit_per_item)
-
-        usage_limit_per_user = request.POST.get("usage-limit-per-user")
-        if usage_limit_per_user == "":
-            usage_limit_per_user_formatted = 1
-        else:
-            usage_limit_per_user_formatted = int(usage_limit_per_user)
+        day = int(coupon_expiry_date[0:2])
+        month = int(coupon_expiry_date[3:5])
+        year = int(coupon_expiry_date[6:])
+        coupon_expiry_date_formatted = date(year, month, day)
 
         username = request.session["username"]
         user = UserDatabase.objects.get(username=username)
         seller_id = user.id
-        
-        try:
-            prevCoupon = Coupon.objects.get(seller_id=seller_id)
-        except:
-            prevCoupon = None
 
-        if prevCoupon is None:
-            coupon = Coupon(
-                seller_id=seller_id,
-                code=coupon_code,
-                description=coupon_description,
-                discount_type=discount_type,
-                apply_to_all_products=apply_to_all_products_boolean,
-                coupon_amount=coupon_amount,
-                allow_free_shipping=allow_free_shipping_boolean,
-                coupon_expiry=coupon_expiry_date_formatted,
-                minimum_spend=minimum_spend,
-                maximum_spend=maximum_spend,
-                individual_use_only=individual_use_only_formatted,
-                exclude_sale_item=exclude_sale_items_formatted,
-                restricted_emails=email_restrictions,
-                usage_limit_per_coupon=usage_limit_per_coupon_formatted,
-                usage_limit_item=usage_limit_per_item_formatted,
-                usage_limit_per_user=usage_limit_per_user_formatted
-            )
-            coupon.save()
-        else:
-            if coupon_code != "":
-                prevCoupon.code = coupon_code
+        coupon = Coupon(
+            code=coupon_code,
+            description=coupon_description,
+            discount_type=discount_type,
+            apply_to_all_products=apply_to_all_products_boolean,
+            coupon_amount=coupon_amount,
+            allow_free_shipping=allow_free_shipping_boolean,
+        )
 
-            if coupon_description != "":
-                prevCoupon.description = coupon_description
-
-            if discount_type != "":
-                prevCoupon.discount_type = discount_type
-
-            prevCoupon.apply_to_all_products = apply_to_all_products_boolean
-            
-            if coupon_amount != "":
-                prevCoupon.coupon_amount = coupon_amount
-
-            prevCoupon.allow_free_shipping = allow_free_shipping_boolean
-
-            prevCoupon.coupon_expiry= coupon_expiry_date_formatted
-
-            prevCoupon.minimum_spend = minimum_spend
-
-            prevCoupon.maximum_spend = maximum_spend
-
-            prevCoupon.individual_use_only = individual_use_only_formatted
-
-            prevCoupon.exclude_sale_item = exclude_sale_items_formatted
-
-            prevCoupon.restricted_emails = email_restrictions
-
-            prevCoupon.usage_limit_per_coupon = usage_limit_per_coupon_formatted
-
-            prevCoupon.usage_limit_item = usage_limit_per_item_formatted
-
-            prevCoupon.usage_limit_per_user = usage_limit_per_user_formatted
-
-            prevCoupon.save()
-
-        coupon_added = True
-    try:
-        coupon_id = request.GET.get("coupon_id")
-        coupon = Coupon.objects.get(id=coupon_id)
-    except:
-        coupon = None
-    
-    params = {
-                "coupon_added": coupon_added,
-                "coupon": coupon
-            }
-
-    return render(request, 'addCoupon.html', params)
+    return render(request, 'addCoupon.html')
 
 def proStore(request):
     try:

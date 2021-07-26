@@ -8,9 +8,9 @@
 {% block title %}Pro Dashboard{% endblock %}
 
 {% block notification %}
-{% if policy %}
+{% if coupon_added %}
 <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Success!</strong> Terms and Conditions updated.
+    <strong>Success!</strong> Coupon updated.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
@@ -56,12 +56,12 @@
 <div class="container">
     <h2>Add Coupon</h2>
     <form action="/add-coupon/" method="POST">
-
+		{% csrf_token %}
         <p><strong>Coupon Code</strong></p>
-        <input type="text" class="form-control my-3" placeholder="Coupon Code" name="coupon-code">
+		<input type="text" class="form-control my-3" placeholder="{{coupon.code}}" name="coupon-code">
 
         <p><strong>Coupon description</strong></p>
-        <textarea type="text" class="form-control my-3" placeholder="Coupon description" name="coupon-description"></textarea>
+		<textarea type="text" class="form-control my-3" placeholder="{{coupon.description}}" name="coupon-description"></textarea>
 
         <h4 class="my-3"><strong>General Permissions</strong></h4>
 
@@ -79,7 +79,7 @@
         </div>
 
         <p><strong>Coupon Amount</strong></p>
-        <input type="text" class="form-control my-3" placeholder="Coupon Amount" name="coupon-amount">
+		<input type="text" class="form-control my-3" placeholder="{{coupon.amount}}" name="coupon-amount">
 
         <div class="form-check my-4">
             <input class="form-check-input" type="checkbox" id="allow-free-shipping" name="allow-free-shipping">
@@ -94,10 +94,10 @@
         <h4 class="my-3"><strong>Usage Restrictions</strong></h4>
 
         <p><strong>Minimum Spend</strong></p>
-        <input type="text" class="form-control my-3" placeholder="Minimum spend" name="minimum-spend">
+		<input type="text" class="form-control my-3" placeholder="{{coupon.minimum_spend}}" name="minimum-spend">
 
         <p><strong>Maximum Spend</strong></p>
-        <input type="text" class="form-control" placeholder="Maximum spend" name="maximum-spend">
+		<input type="text" class="form-control" placeholder="{{coupon.maximum_spend}}" name="maximum-spend">
 
         <div class="form-check mt-4">
             <input class="form-check-input" type="checkbox" id="individual-use-only" name="individual-use-only">
@@ -117,19 +117,19 @@
         <p class="comment">Check this box if the coupon should not apply to items on sale. Per-item coupons will only work if the item is not on sale. Per-cart coupons will only work if there are no sale items in the cart.</p>
 
         <p><strong>Email Restrictions</strong></p>
-        <input type="text" class="form-control" placeholder="No restrictions" name="email-restrictions">
+		<input type="text" class="form-control" placeholder="{{coupon.restricted_emails}}" name="email-restrictions">
         <p class="comment">List of allowed emails to check against the customer's billing email when an order is placed. Separate email addresses with commas.</p>
 
         <h4 class="mb-3"><strong>Usage Limits</strong></h4>
 
         <p><strong>Usage limit per coupon</strong></p>
-        <input type="text" class="form-control mb-3" placeholder="Unlimited Usage" name="usage-limit-per-coupon">
+		<input type="text" class="form-control mb-3" placeholder="{{coupon.usage_limit_per_coupon}}" name="usage-limit-per-coupon">
 
         <p><strong>Usage limit to x items</strong></p>
-        <input type="text" class="form-control mb-3" placeholder="Unlimited Usage" name="usage-limit-items">
+		<input type="text" class="form-control mb-3" placeholder="{{coupon.usage_limit_item}}" name="usage-limit-per-item">
 
         <p><strong>Usage limit per user</strong></p>
-        <input type="text" class="form-control" placeholder="Unlimited Usage" name="usage-limit-per-user">
+		<input type="text" class="form-control" placeholder="{{coupon.usage_limit_per_user}}" name="usage-limit-per-user">
 
         <button type="submit" class="btn btn-primary my-4">Add Coupon</button>
     </form>

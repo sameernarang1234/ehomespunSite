@@ -55,28 +55,28 @@
     <form action="/pro-social/" method="POST">
         {% csrf_token %}
         <p><strong>Twitter username</strong></p>
-        <input class="form-control mb-3" name="twitter-username" type="text" placeholder="Your Twitter username without the URL">
+		<input class="form-control mb-3" name="twitter-username" type="text" placeholder="{{store.twitter_username}}">
         
         <p><strong>Instagram username</strong></p>
-        <input class="form-control mb-3" name="instagram-username" type="text" placeholder="Your Instagram username without the URL">
+		<input class="form-control mb-3" name="instagram-username" type="text" placeholder="{{store.instagram_username}}">
         
         <p><strong>Facebook URL</strong></p>
-        <input class="form-control mb-3" name="facebook-url" type="text" placeholder="Your Facebook URL">
+		<input class="form-control mb-3" name="facebook-url" type="text" placeholder="{{store.facebook_url}}">
         
         <p><strong>LinkedIn URL</strong></p>
-        <input class="form-control mb-3" name="linkedin-url" type="text" placeholder="Your LinkedIn URL">
+		<input class="form-control mb-3" name="linkedin-url" type="text" placeholder="{{store.linkedin_url}}">
         
         <p><strong>YouTube URL</strong></p>
-        <input class="form-control mb-3" name="youtube-url" type="text" placeholder="Your YouTube URL">
+		<input class="form-control mb-3" name="youtube-url" type="text" placeholder="{{store.youtube_url}}">
         
         <p><strong>Pinterest URL</strong></p>
-        <input class="form-control mb-3" name="pinterest-url" type="text" placeholder="Your Pinterest URL">
+		<input class="form-control mb-3" name="pinterest-url" type="text" placeholder="{{store.pinterest_url}}">
         
         <p><strong>SnapChat username</strong></p>
-        <input class="form-control mb-3" name="snapchat-username" type="text" placeholder="Your SnapChat username">
+		<input class="form-control mb-3" name="snapchat-username" type="text" placeholder="{{store.snapchat_username}}">
         
         <p><strong>Telegram username</strong></p>
-        <input class="form-control mb-3" name="telegram-username" type="text" placeholder="Your Telegram username">
+		<input class="form-control mb-3" name="telegram-username" type="text" placeholder="{{store.telegram_username}}">
 
         <button class="btn btn-primary mb-3" type="submit">Save Changes</button>
     </form>

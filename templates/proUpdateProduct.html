@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/addProduct/addProduct.css' %}">
+{% endblock %}
+
+{% block title %}Add Products{% endblock %}
+
+{% block notification %}
+{% if product_modified %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Product added to your store.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Add Products</h1>
+
+<div class="container header-container">
+    <div class="row menu-bar">
+        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
+        <div class="col-xl-2 col-sm-3"><a href="/pro-store/">View Store</a></div>
+    </div>
+</div>
+
+<div class="container sub-header-container">
+    <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
+</div>
+
+<div class="container mx-auto main-container">
+    <h1>Add Product</h1>
+    <form action="/pro-update-product/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+	<input type="hidden" value="{{product.id}}" name="product_id">
+
+        <p>Product Name</p>
+	<input type="text" name="product_name" class="single-line-input" placeholder="{{product.name}}">
+        
+        <p>Product Description</p>
+	<textarea type="text" name="product_description" class="multi-line-input" placeholder="{{product.description}}"></textarea>
+        
+        <p>Product Short Description</p>
+	<textarea type="text" name="product_short_description" class="multi-line-input" placeholder="{{product.short_description}}" row></textarea>
+        
+        <p>Categories</p>
+	<select class="form-select" aria-label="Default select example" name="categoryName">
+            {% for category in categories %}
+            <option value="{{category.name}}">{{category.name}}</option>
+            {% endfor %}
+        </select>
+        
+        <p>Please add 3 images of the product</p>
+        <input type="file" name="image1_file">
+        <input type="file" name="image2_file">
+        <input type="file" name="image3_file">
+        
+        <p>Product Type</p>
+        <select class="form-select" aria-label="Default select example" name="product-type">
+            <option selected>Simple Product</option>
+            <option value="Simple Product">Simple Product</option>
+            <option value="Grouped Product">Grouped Product</option>
+            <option value="External/Affiliate Product">External/Affiliate Product</option>
+            <option value="Variable Product">Variable Product</option>
+        </select>
+        
+        <p>Regular Price</p>
+	<input type="text" name="regular-price" placeholder="{{product.price}}">
+        
+        <p>Sale Price</p>
+	<input type="text" name="sale-price" placeholder="{{product.sale_price}}">
+
+        <h3>Taxes</h3>
+
+        <p>Tax Status</p>
+        <select class="form-select" aria-label="Default select example" name="tax-status">
+            <option selected>Taxable</option>
+            <option value="Taxable">Taxable</option>
+            <option value="Shipping Only">Shipping Only</option>
+            <option value="None">None</option>
+        </select>
+
+        <p>Tax Class</p>
+        <select class="form-select" aria-label="Default select example" name="tax-class">
+            <option selected>Standard</option>
+            <option value="Standard">Standard</option>
+            <option value="Reduced Rate">Reduced Rate</option>
+            <option value="Zero Rate">Zero Rate</option>
+        </select>
+
+        <h3>Inventory</h3>
+
+        <p>Stock Status</p>
+        <select class="form-select" aria-label="Default select example" name="stock-status">
+            <option selected>In Stock</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Out Of Stock">Out Of Stock</option>
+        </select>
+
+        <button class="btn btn-primary my-3" type="submit">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

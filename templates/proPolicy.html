@@ -55,7 +55,7 @@
     <form action="/pro-policies/" method="POST">
         {% csrf_token %}
         <p><strong>Terms and Conditions</strong></p>
-        <textarea class="form-control mb-3" name="terms-and-conditions" type="text"></textarea>
+		<textarea placeholder="{{store.terms_and_conditions}}" class="form-control mb-3" name="terms-and-conditions" type="text"></textarea>
 
         <button class="btn btn-primary mb-3" type="submit">Save Changes</button>
     </form>

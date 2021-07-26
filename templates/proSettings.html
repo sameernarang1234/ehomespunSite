@@ -53,25 +53,25 @@
     <form action="/pro-settings/" method="POST">
         {% csrf_token %}
         <p><strong>Store Name <span>*</span></strong></p>
-        <input name="store-name" placeholder="Store Name" class="form-control">
+		<input name="store-name" placeholder="{{store.name}}" class="form-control">
         <div>Your shop name is public and must be unique.</div>
         <br>
 
         <p><strong>Store Description</strong></p>
-        <textarea name="store-description" placeholder="Store Description" class="form-control text-area"></textarea>
+		<textarea name="store-description" placeholder="{{store.description}}" class="form-control text-area"></textarea>
         <br>
 
         <p><strong>Seller Info</strong></p>
-        <textarea name="seller-info" placeholder="Seller Info" class="form-control text-area"></textarea>
+		<textarea name="seller-info" placeholder="{{store.seller_info}}" class="form-control text-area"></textarea>
         <br>
 
         <p><strong>Store website / Blog URL</strong></p>
-        <input name="store-url" placeholder="Store URL" class="form-control">
+		<input name="store-url" placeholder="{{store.url}}" class="form-control">
         <div>Your company / Blog URL</div>
         <br>
 
         <p><strong>Store phone</strong></p>
-        <input name="store-phone" placeholder="Store Phone Number" class="form-control">
+		<input name="store-phone" placeholder="{{store.phone}}" class="form-control">
         <div>This is your store contact number</div>
         <br>
 
@@ -85,11 +85,11 @@
         <br>
 
         <p><strong>Store Address</strong></p>
-        <textarea name="store-address" placeholder="" class="form-control text-area"></textarea>
+		<textarea name="store-address" placeholder="{{store.address}}" class="form-control text-area"></textarea>
         <br>
 
         <p><strong>City / Town</strong></p>
-        <input name="city-town" placeholder="City / Town" class="form-control">
+        <input name="city-town" placeholder="store.city" class="form-control">
         <br>
 
         <p><strong>State / County</strong></p>
@@ -101,7 +101,7 @@
         <br>
 
         <p><strong>Postcode / Zip</strong></p>
-        <input name="postal-code" placeholder="Postal Code" class="form-control">
+		<input name="postal-code" placeholder="{{store.postcode}}" class="form-control">
 
         <button class="btn btn-primary my-3" type="submit">Save Changes</button>
     </form>
