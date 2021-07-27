@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from datetime import date, timedelta
 
+import stripe
+
 # Create your views here.
 def homePage(request):
     categories = Category.objects.all()
@@ -28,7 +30,11 @@ def homePage(request):
     return render(request, 'home.html', params)
 
 def loginPage(request):
-    return render(request, 'login.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'login.html', params)
 
 def handleSignup(request):
     if request.method == 'POST':
@@ -125,37 +131,81 @@ def userDashboard(request):
     except:
         logout(request)
         return redirect("loginPage")
-    return render(request, "userDashboard.html")
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, "userDashboard.html", params)
 
 def supportPage(request):
-    return render(request, 'support.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'support.html', params)
 
 def buyerTerms(request):
-    return render(request, 'buyerTerms.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'buyerTerms.html', params)
 
 def sellerTerms(request):
-    return render(request, 'sellerTerms.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'sellerTerms.html', params)
 
 def refundPolicy(request):
-    return render(request, 'refund.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'refund.html', params)
 
 def passwordReset(request):
-    return render(request, 'passwordReset.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'passwordReset.html', params)
 
 def userDashboard(request):
-    return render(request, 'userDashboard.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'userDashboard.html', params)
 
 def ordersPage(request):
-    return render(request, 'ordersPage.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'ordersPage.html', params)
 
 def subscriptionsPage(request):
-    return render(request, 'subscriptionsPage.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'subscriptionsPage.html', params)
 
 def downloadsPage(request):
-    return render(request, 'downloadsPage.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'downloadsPage.html', params)
 
 def addressPage(request):
-    return render(request, 'addressPage.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'addressPage.html', params)
 
 def paymentMethodPage(request):
     try:
@@ -194,8 +244,10 @@ def paymentMethodPage(request):
 
         payment_updated = True
 
+    categories = Category.objects.all()
     params = {
-                "payment_updated": payment_updated
+                "payment_updated": payment_updated,
+                "categories": categories
             }
 
     return render(request, 'paymentMethodPage.html', params)
@@ -221,16 +273,22 @@ def accountPage(request):
     last_name = buyerAddress.last_name
     email = buyerAddress.email
 
+    categories = Category.objects.all()
     params = {
                 "first_name": first_name,
                 "last_name": last_name,
-                "email": email
+                "email": email,
+                "categories": categories
             }
 
     return render(request, 'accountPage.html', params)
 
 def becomeSellerPage(request):
-    return render(request, 'becomeSellerPage.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'becomeSellerPage.html', params)
 
 def proDashboard(request):
     try:
@@ -263,11 +321,13 @@ def proDashboard(request):
         except:
             amount_products += 0.00
 
+    categories = Category.objects.all()
     params = {
         "num_orders": num_orders,
         "amount_orders": amount_orders,
         "num_products": num_products,
-        "amount_products": amount_products
+        "amount_products": amount_products,
+        "categories": categories
     }
 
     return render(request, 'proDashboard.html', params)
@@ -306,10 +366,12 @@ def proProducts(request):
         products = allProducts[start_index:end_index]
         next_page = page_number + 1
     
+    categories = Category.objects.all()
     params = {
         "products": products,
         "next_page": next_page,
-        "prev_page": prev_page
+        "prev_page": prev_page,
+        "categories": categories
     }
 
     return render(request, 'proProducts.html', params)
@@ -509,8 +571,11 @@ def proOrders(request):
     except:
         logout(request)
         return redirect("loginPage")
-
-    return render(request, 'proOrders.html')
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request, 'proOrders.html', params)
 
 def proSettings(request):
     try:
@@ -594,13 +659,18 @@ def proSettings(request):
     
     user = UserDatabase.objects.get(username=username)
     seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
+    try:
+        store = Store.objects.get(seller_id=seller_id)
+    except:
+        store = None
 
+    categories = Category.objects.all()
     states = StoreState.objects.all()
     params = {
         "states": states,
         "settings": settings_updated,
-        "store": store
+        "store": store,
+        "categories": categories
     }
     return render(request, 'proSettings.html', params)
 
@@ -653,9 +723,11 @@ def proPayments(request):
     except:
         payment = None
 
+    categories = Category.objects.all()
     params = {
         "paymentStatus": paymentStatus,
-        "payment": payment
+        "payment": payment,
+        "categories": categories
     }
 
     return render(request, 'proPayments.html', params)
@@ -686,15 +758,17 @@ def proBranding(request):
 
         store = Store.objects.get(seller_id=seller_id)
 
-        store.store_banner = store_banner
-        store.store_icon = store_icon
+        store.store_banner = store_banner_url
+        store.store_icon = store_icon_url
 
         store.save()
 
         images_uploaded = True
 
+    categories = Category.objects.all()
     params = {
         "images_uploaded": images_uploaded,
+        "categories": categories
     }
     return render(request, 'proBranding.html', params)
 
@@ -811,11 +885,16 @@ def proShipping(request):
     user = UserDatabase.objects.get(username=username)
     seller_id = user.id
 
-    shipping = Shipping.objects.get(seller_id=seller_id)
+    try:
+        shipping = Shipping.objects.get(seller_id=seller_id)
+    except:
+        shipping = None
     
+    categories = Category.objects.all()
     params = {
         "shipping_enabled": shipping_enabled,
-        "shipping": shipping
+        "shipping": shipping,
+        "category": categories
     }
 
     return render(request, 'proShipping.html', params)
@@ -859,11 +938,16 @@ def proSocial(request):
     
     user = UserDatabase.objects.get(username=username)
     seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
+    try:
+        store = Store.objects.get(seller_id=seller_id)
+    except:
+        store = None
 
+    categories = Category.objects.all()
     params = {
         "social": social_handles_updated,
-        "store": store
+        "store": store,
+        "categories": categories
     }
 
     return render(request,"proSocial.html", params)
@@ -892,11 +976,16 @@ def proPolicy(request):
     
     user = UserDatabase.objects.get(username=username)
     seller_id = user.id
-    store = Store.objects.get(seller_id=seller_id)
+    try:
+        store = Store.objects.get(seller_id=seller_id)
+    except:
+        store = None
 
+    categories = Category.objects.all()
     params = {
         "policy": policy_updated,
-        "store": store
+        "store": store,
+        "categories": categories
     }
 
     return render(request,"proPolicy.html", params)
@@ -914,7 +1003,10 @@ def proMembership(request):
     seller_id = user.id
     print("SELLER ID")
     print(seller_id)
-    store = Store.objects.get(seller_id=seller_id)
+    try:
+        store = Store.objects.get(seller_id=seller_id)
+    except:
+        store = None
 
     if request.method == "POST":
         membership_type = request.POST.get("membership-type")
@@ -931,29 +1023,39 @@ def proMembership(request):
     product_count = 0
     for product in products:
         product_count += 1
-
-    if store.membership_type == "ANNUAL SELLER MEMBERSHIP":
-        if (date.today() - store.membership_start_date) > timedelta(365):
-            store.membership_status = "inactive"
-        else:
-            store.membership_status = "active"
-    elif store.membership_type == "MONTHLY SELLER MEMBERSHIP":
-        if (date.today() - store.membership_start_date) > timedelta(30):
-            store.membership_status = "inactive"
-        else:
-            store.membership_status = "active"
-    else:
-        store.membership_status = "inactive"
     
-    store.save()
+    categories = Category.objects.all()
 
-    params = {
-        "is_member": is_member,
-        "membership_type": store.membership_type,
-        "membership_status": store.membership_status,
-        "start_date": store.membership_start_date,
-        "product_count": product_count
-    }
+    if store is not None:
+        if store.membership_type == "ANNUAL SELLER MEMBERSHIP":
+            if (date.today() - store.membership_start_date) > timedelta(365):
+                store.membership_status = "inactive"
+            else:
+                store.membership_status = "active"
+        elif store.membership_type == "MONTHLY SELLER MEMBERSHIP":
+            if (date.today() - store.membership_start_date) > timedelta(30):
+                store.membership_status = "inactive"
+            else:
+                store.membership_status = "active"
+        else:
+            store.membership_status = "inactive"
+        
+        store.save()
+
+        params = {
+            "is_member": is_member,
+            "membership_type": store.membership_type,
+            "membership_status": store.membership_status,
+            "start_date": store.membership_start_date,
+            "product_count": product_count,
+            "categories": categories
+        }
+    else:
+        params = {
+            "is_member": is_member,
+            "product_count": product_count,
+            "categories": categories
+        }
 
     return render(request,"proMembership.html", params)
 
@@ -963,7 +1065,11 @@ def proRatings(request):
     except:
         logout(request)
         return redirect("loginPage")
-    return render(request,"proRatings.html")
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request,"proRatings.html", params)
 
 def proRefunds(request):
     try:
@@ -971,7 +1077,11 @@ def proRefunds(request):
     except:
         logout(request)
         return redirect("loginPage")
-    return render(request,"proRefunds.html")
+    categories = Category.objects.all()
+    params = {
+        "categories": categories
+    }
+    return render(request,"proRefunds.html", params)
 
 def proCoupons(request):
     try:
@@ -984,8 +1094,10 @@ def proCoupons(request):
     user_id = user.id
     coupons = Coupon.objects.filter(seller_id=user_id)
 
+    categories = Category.objects.all()
     params = {
-                "coupons": coupons
+                "coupons": coupons,
+                "categories": categories
             }
 
     return render(request,"proCoupons.html", params)
@@ -1137,9 +1249,11 @@ def proAddCoupon(request):
     except:
         coupon = None
     
+    categories = Category.objects.all()
     params = {
                 "coupon_added": coupon_added,
-                "coupon": coupon
+                "coupon": coupon,
+                "category": categories
             }
 
     return render(request, 'addCoupon.html', params)
@@ -1150,7 +1264,54 @@ def proStore(request):
     except:
         logout(request)
         return redirect("loginPage")
-    return render(request, 'proStore.html')
+
+    seller = UserDatabase.objects.get(username=username)
+    seller_id = seller.id
+
+    page = request.GET.get('page-number')
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+
+    
+    try:
+        allProducts = Product.objects.filter(seller_id=seller_id)
+    except:
+        allProducts = None
+    
+    start_index = (page_number - 1) * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+    
+    try:
+        store = Store.objects.get(seller_id=seller_id)
+    except:
+        store = None
+
+
+    categories = Category.objects.all()
+    params = {
+        "categories": categories,
+        "products": products,
+        "store": store,
+        "next_page": next_page,
+        "prev_page": prev_page
+    }
+    return render(request, 'proStore.html', params)
 
 def categoryPage(request):
 
@@ -1160,9 +1321,11 @@ def categoryPage(request):
 
     subCategories = SubCategory.objects.filter(category_id=categoryID)
 
+    categories = Category.objects.all()
     params = {
         'sub_categories': subCategories,
-        'category': category
+        'category': category,
+        "categories": categories
     }
     return render(request, 'categoryPage.html', params)
 
@@ -1192,16 +1355,47 @@ def shopPage(request):
         products = allProducts[start_index:end_index]
         next_page = page_number + 1
     
+    categories = Category.objects.all()
     params = {
         "products": products,
         "next_page": next_page,
-        "prev_page": prev_page
+        "prev_page": prev_page,
+        "categories":categories
     }
 
     return render(request, 'shop.html', params)
 
 def productPage(request):
-    product_id = request.GET.get('product_id')
+    review_updated = False
+    if request.method != "POST":
+        product_id = request.GET.get('product_id')
+    else:
+
+        try:
+            username = request.session["username"]
+        except:
+            return redirect("loginPage")
+
+        product_id = request.POST.get("product_id")
+
+        comment = request.POST.get("comment")
+        rating_value = request.POST.get("rating")
+
+        if comment != "":
+            userComment = UserComment(
+                username=username,
+                product_id=product_id,
+                comment=comment
+            )
+            userComment.save()
+
+        userReview = UserReview(
+            product_id=product_id,
+            rating=rating_value
+        )
+        userReview.save()
+
+        review_updated = True
     
     product = Product.objects.get(id=product_id)
     seller_id = product.seller_id
@@ -1229,6 +1423,7 @@ def productPage(request):
 
     comments = UserComment.objects.filter(product_id=product_id)
 
+    categories = Category.objects.all()
     params = {
         "product": product,
         "seller": seller,
@@ -1237,7 +1432,9 @@ def productPage(request):
         "total_rating": total_rating,
         "rating_count": count,
         "comments": comments,
-        "shipping": shipping
+        "shipping": shipping,
+        "review_updated": review_updated,
+        "categories": categories
     }
 
     return render(request, "product.html", params)
@@ -1251,7 +1448,7 @@ def addToCart(request):
     
     if request.method == "POST":
         quantity = request.POST.get("quantity")
-        if quantity is None:
+        if quantity == "":
             quantity = 1
         product_id = request.POST.get("product_id")
         
@@ -1311,7 +1508,7 @@ def cartPage(request):
     cart_items = Cart.objects.filter(buyer_id=buyer_id)
 
     allProducts = []
-
+    cart_total = 0.0
     for cart_item in cart_items:
         product_id = cart_item.product_id
         product = Product.objects.get(id=product_id)
@@ -1320,6 +1517,7 @@ def cartPage(request):
             "quantity": cart_item.product_quantity
         }
         allProducts.append(productData)
+        cart_total += float(product.sale_price)
 
     start_index = (page_number - 1) * 2
     end_index = start_index + 2
@@ -1331,11 +1529,14 @@ def cartPage(request):
         products = allProducts[start_index:end_index]
         next_page = page_number + 1
     
+    categories = Category.objects.all()
     params = {
         "cart_items": products,
         "next_page": next_page,
         "prev_page": prev_page,
-        "item_deleted": item_deleted
+        "item_deleted": item_deleted,
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'cartPage.html', params)
@@ -1397,11 +1598,13 @@ def wishlist(request):
         products = allProducts[start_index:end_index]
         next_page = page_number + 1
     
+    categories = Category.objects.all()
     params = {
         "wishlist_items": products,
         "next_page": next_page,
         "prev_page": prev_page,
-        "item_deleted": item_deleted
+        "item_deleted": item_deleted,
+        "categories": categories
     }
 
     return render(request, 'wishlistPage.html', params)
@@ -1500,9 +1703,11 @@ def buyerBillingAddress(request):
 
     states = StoreState.objects.all()
 
+    categories = Category.objects.all()
     params = {
         "states": states,
-        "address_updated": address_updated
+        "address_updated": address_updated,
+        "category": categories
     }
 
     return render(request, "buyerBillingAddress.html", params)
@@ -1575,10 +1780,127 @@ def buyerShippingAddress(request):
         print(address_updated)
     states = StoreState.objects.all()
 
+    categories = Category.objects.all()
     params = {
         "states": states,
-        "address_updated": address_updated
+        "address_updated": address_updated,
+        "category": categories
     }
 
     return render(request, "buyerShippingAddress.html", params)
 
+def searchProductPage(request):
+    page = request.GET.get('page-number')
+    searchTerm = request.GET.get("search-term")
+    category_name = request.GET.get('category')
+    print(searchTerm)
+    print(category_name)
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+    
+    productDatabase = Product.objects.all()
+
+    allProducts = []
+
+    for product in productDatabase:
+        category_id = product.category_id
+        category = Category.objects.get(id=category_id)
+        category_name2 = category.name
+        if searchTerm != "":
+            if product.name.find(searchTerm):
+                if category_name == category_name2:
+                    allProducts.append(product)
+                    continue
+            if product.description.find(searchTerm):
+                if category_name == category_name2:
+                    allProducts.append(product)
+                    continue
+            if product.short_description.find(searchTerm):
+                if category_name == category_name2:
+                    allProducts.append(product)
+                    continue
+            if product.type.find(searchTerm):
+                if category_name == category_name2:
+                    allProducts.append(product)
+                    continue
+        else:
+            if category_name == category_name2:
+                allProducts.append(product)
+        
+        
+
+    start_index = (page_number - 1) * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+    
+    categories = Category.objects.all()
+    params = {
+        "products": products,
+        "next_page": next_page,
+        "prev_page": prev_page,
+        "categories": categories,
+        "allProducts": allProducts,
+        "searchTerm": searchTerm
+    }
+
+    return render(request, 'shop2.html', params)
+
+def checkout(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    quantity = int(request.POST.get("quantity"))
+    product_id = request.POST.get("product_id")
+    product = Product.objects.get(id=product_id)
+    price = float(product.sale_price)
+
+    amount = float(quantity) * price
+    amount_int = int(amount)*100
+
+    seller_id = product.seller_id
+    sellerPaymentDetails = SellerPaymentDetail.objects.get(seller_id=seller_id)
+
+    stripe.api_key = sellerPaymentDetails.stripe_private_key
+
+    key = sellerPaymentDetails.stripe_public_key
+
+    params = {
+        "amount": amount_int,
+        "key": key,
+        "product": product,
+        "quantity": quantity
+    }
+    return render(request, "checkout.html", params)
+
+def charge(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    amount = request.POST.get("amount")
+    charge = stripe.Charge.create(
+        amount=amount,
+        currency="inr",
+        description="Payment Gateway",
+        source=request.POST["stripeToken"]
+    )
+    return render(request,"charge.html")

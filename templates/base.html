@@ -26,10 +26,14 @@
     
     <div class="nav-bar">
         <img src="../static/assets/logo.png" alt="eHomespun-logo">
-        <form class="form-horizontal" action="" method="post">
-            <input type="text" name="search" placeholder="Search" class="text-input">
+        <form class="form-horizontal" action="/search-product/" method="GET">
+            <input type="text" name="search-term" placeholder="Search" class="text-input">
             <input id="category" type="hidden" name="category">
-            <button id="categories-button">All categories</button>
+            <select name="category">
+                {% for category in categories %}
+                <option value="{{category.name}}">{{category.name}}</option>
+                {% endfor %}
+            </select>
             <button type="submit" id="submit-button">
                 <!-- <img src="../static/assets/search.png" rel="search-img" class="search-img"> -->
                 Search

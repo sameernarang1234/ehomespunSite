@@ -98,3 +98,22 @@ span {
     width: 60%;
     height: 100px;
 }
+
+.ratings-img {
+    width: 20px;
+    cursor: pointer;
+}
+
+.ratings-img2 {
+    display: none;
+}
+
+.comment-div {
+    background-color: grey;
+    border-radius: 20px;
+}
+
+.comment-div div p {
+    font-size: 1.2rem;
+    color: white;
+}

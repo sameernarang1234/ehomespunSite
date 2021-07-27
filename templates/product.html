@@ -7,13 +7,22 @@
 
 {% block title %}Shop{% endblock %}
 
+{% block notification %}
+{% if review_updated %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> User review updated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endblock %}
+
 {% block body %}
 <div class="container-fluid mx-auto">
     <div class="banner-image-div">
-        <img src="/media/{{store.store_banner}}" alt="Store-Banner" class="store-banner">
+        <img src="{{store.store_banner}}" alt="Store-Banner" class="store-banner">
     </div>
     <div class="store-title-div">
-        <img src="/media/{{store.store_icon}}" alt="Store-Banner" class="store-icon">
+        <img src="{{store.store_icon}}" alt="Store-Banner" class="store-icon">
         <div>
             <h2>{{store.name}}</h2>
             <p>{{store.url}}</p>
@@ -115,15 +124,44 @@
 			{% if not comments %}
 			<p>There are no comments yet</p>
 			{% endif %}
-			{% for comment in comments %}
-			<p><strong>{{comment.username}}</strong></p>
-			<p>{{comment.comment}}</p>
-			{% endfor %}
+            <div class="comment-div my-3 py-1">
+                {% for comment in comments %}
+                <div class="container-fluid">
+                    <p><strong>@{{comment.username}}</strong></p>
+                    <input class="form-control mb-4" disabled value="{{comment.comment}}">
+                </div>
+                {% endfor %}
+            </div>
 			{% if user.is_authenticated %}
 			<p><strong>Your Feedback</strong></p>
-			<form>
+			<form action="/product/" method="post">
+                {% csrf_token %}
 				<textarea type="text" name="comment" placeholder="Comment..." class="text-area"></textarea><br>
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<div class="row">
+                    <div class="col-1">
+                        <img src="../static/assets/hollow_star.png" alt="hollow-star" class="ratings-img" id="star-1">
+                        <img src="../static/assets/yellow_star.jpeg" alt="hollow-star" class="ratings-img ratings-img2" id="star-12">
+                    </div>
+                    <div class="col-1">
+                        <img src="../static/assets/hollow_star.png" alt="hollow-star" class="ratings-img" id="star-2">
+                        <img src="../static/assets/yellow_star.jpeg" alt="hollow-star" class="ratings-img ratings-img2" id="star-22">
+                    </div>
+                    <div class="col-1">
+                        <img src="../static/assets/hollow_star.png" alt="hollow-star" class="ratings-img" id="star-3">
+                        <img src="../static/assets/yellow_star.jpeg" alt="hollow-star" class="ratings-img ratings-img2" id="star-32">
+                    </div>
+                    <div class="col-1">
+                        <img src="../static/assets/hollow_star.png" alt="hollow-star" class="ratings-img" id="star-4">
+                        <img src="../static/assets/yellow_star.jpeg" alt="hollow-star" class="ratings-img ratings-img2" id="star-42">
+                    </div>
+                    <div class="col-1">
+                        <img src="../static/assets/hollow_star.png" alt="hollow-star" class="ratings-img" id="star-5">
+                        <img src="../static/assets/yellow_star.jpeg" alt="hollow-star" class="ratings-img ratings-img2" id="star-52">
+                    </div>
+				</div>
+                <input type="hidden" value="0" name="rating" id="rating-value">
+                <input type="hidden" value="{{product.id}}" name="product_id">
+                <button type="submit" class="btn btn-primary mt-5">Submit</button>
 			</form>
 			{% endif %}
 		</div>
@@ -165,4 +203,132 @@
         </div>
     </div>
 </div>
+<script>
+    let rating_value = document.getElementById("rating-value")
+
+    let star1 = document.getElementById("star-1")
+    let star12 = document.getElementById("star-12")
+    star1.addEventListener("click", () => {
+        if (star1.style.display !== "none") {
+            star1.style.display = "none"
+            star12.style.display = "inline"
+            rating_value.value="1"
+        }
+    })
+    star12.addEventListener("click", () => {
+        if (star12.style.display !== "none") {
+            star12.style.display = "none"
+            star1.style.display = "inline"
+            star22.style.display = "none"
+            star2.style.display = "inline"
+            star32.style.display = "none"
+            star3.style.display = "inline"
+            star42.style.display = "none"
+            star4.style.display = "inline"
+            star52.style.display = "none"
+            star5.style.display = "inline"
+            rating_value.value="0"
+        }
+    })
+
+    let star2 = document.getElementById("star-2")
+    let star22 = document.getElementById("star-22")
+    star2.addEventListener("click", () => {
+        if (star2.style.display !== "none") {
+            star2.style.display = "none"
+            star22.style.display = "inline"
+            star1.style.display = "none"
+            star12.style.display = "inline"
+            rating_value.value="2"
+        }
+    })
+    star22.addEventListener("click", () => {
+        if (star22.style.display !== "none") {
+            star22.style.display = "none"
+            star2.style.display = "inline"
+            star32.style.display = "none"
+            star3.style.display = "inline"
+            star42.style.display = "none"
+            star4.style.display = "inline"
+            star52.style.display = "none"
+            star5.style.display = "inline"
+            rating_value.value="1"
+        }
+    })
+
+    let star3 = document.getElementById("star-3")
+    let star32 = document.getElementById("star-32")
+    star3.addEventListener("click", () => {
+        if (star3.style.display !== "none") {
+            star3.style.display = "none"
+            star32.style.display = "inline"
+            star1.style.display = "none"
+            star12.style.display = "inline"
+            star2.style.display = "none"
+            star22.style.display = "inline"
+            rating_value.value="3"
+        }
+    })
+    star32.addEventListener("click", () => {
+        if (star12.style.display !== "none") {
+            star32.style.display = "none"
+            star3.style.display = "inline"
+            star42.style.display = "none"
+            star4.style.display = "inline"
+            star52.style.display = "none"
+            star5.style.display = "inline"
+            rating_value.value="2"
+        }
+    })
+
+    let star4 = document.getElementById("star-4")
+    let star42 = document.getElementById("star-42")
+    star4.addEventListener("click", () => {
+        if (star4.style.display !== "none") {
+            star4.style.display = "none"
+            star42.style.display = "inline"
+            star3.style.display = "none"
+            star32.style.display = "inline"
+            star1.style.display = "none"
+            star12.style.display = "inline"
+            star2.style.display = "none"
+            star22.style.display = "inline"
+            rating_value.value="4"
+        }
+    })
+    star42.addEventListener("click", () => {
+        if (star42.style.display !== "none") {
+            star42.style.display = "none"
+            star4.style.display = "inline"
+            star52.style.display = "none"
+            star5.style.display = "inline"
+            rating_value.value="3"
+        }
+    })
+
+    let star5 = document.getElementById("star-5")
+    let star52 = document.getElementById("star-52")
+    star5.addEventListener("click", () => {
+        if (star5.style.display !== "none") {
+            star5.style.display = "none"
+            star52.style.display = "inline"
+            star4.style.display = "none"
+            star42.style.display = "inline"
+            star3.style.display = "none"
+            star32.style.display = "inline"
+            star1.style.display = "none"
+            star12.style.display = "inline"
+            star2.style.display = "none"
+            star22.style.display = "inline"
+            rating_value.value="5"
+        }
+    })
+    star52.addEventListener("click", () => {
+        if (star52.style.display !== "none") {
+            star52.style.display = "none"
+            star5.style.display = "inline"
+            rating_value.value="4"
+        }
+    })
+</script>
 {% endblock %}

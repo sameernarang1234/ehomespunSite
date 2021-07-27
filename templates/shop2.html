@@ -2,39 +2,14 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/proStore/proStore.css' %}">
+<link rel="stylesheet" href="{% static 'css/shop/shop.css' %}">
 {% endblock %}
 
-{% block title %}Pro Dashboard{% endblock %}
-
-{% block notification %}
-{% if policy %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Success!</strong> Terms and Conditions updated.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endif %}
-{% endblock %}
+{% block title %}Shop{% endblock %}
 
 {% block body %}
-<h1 class="main-heading">Pro Dashboard</h1>
-
-<div class="container header-container">
-    <div class="row menu-bar">
-        <div class="col-xl-2 col-sm-3"><a href="/pro-dashboard/">Dashboard</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-store/">View Store</a></div>
-    </div>
-</div>
-
 <div class="container main-shop-container">
-    <h1><strong>Your Store</strong></h1>
+    <h1><strong>Shop</strong></h1>
     <div class="row">
         {% for product in products %}
         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
@@ -51,8 +26,8 @@
         {% endfor %}
     </div>
 </div>
-<div class="container-fluid pages-container">
-    <form class="form-page">
+<div class="pages-container">
+    <form class="form-page" action="/search-product/" method="GET">
         <input type="hidden" name="page-number" value="{{prev_page}}">
         <input type="hidden" name="allProducts" value="{{allProducts}}">
         <input type="hidden" name="search-term" value="{{searchTerm}}">
@@ -62,7 +37,7 @@
         <button type="submit" class="btn btn-primary disabled" disabled>PREV</button>
         {% endif %}
     </form>
-    <form class="form-page">
+    <form class="form-page" action="/search-product/" method="GET">
         <input type="hidden" name="page-number" value="{{next_page}}">
         <input type="hidden" name="allProducts" value="{{allProducts}}">
         <input type="hidden" name="search-term" value="{{searchTerm}}">
@@ -73,5 +48,4 @@
         {% endif %}
     </form>
 </div>
-
 {% endblock %}

@@ -45,4 +45,7 @@ urlpatterns = [
     path('add-to-wishlist/', views.addToWishlist, name='addToWishlist'),
     path('buyer-shipping-address/', views.buyerShippingAddress, name='buyerShippingAddress'),
     path('buyer-billing-address/', views.buyerBillingAddress, name='buyerBillingAddress'),
+    path('search-product/', views.searchProductPage, name='searchProductPage'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('charge/', views.charge, name='charge'),
 ]

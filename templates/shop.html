@@ -29,6 +29,8 @@
 <div class="pages-container">
     <form class="form-page">
         <input type="hidden" name="page-number" value="{{prev_page}}">
+        <input type="hidden" name="allProducts" value="{{allProducts}}">
+        <input type="hidden" name="search-term" value="{{searchTerm}}">
         {% if prev_page != 0 %}
         <button type="submit" class="btn btn-primary">PREV</button>
         {% else %}
@@ -37,6 +39,8 @@
     </form>
     <form class="form-page">
         <input type="hidden" name="page-number" value="{{next_page}}">
+        <input type="hidden" name="allProducts" value="{{allProducts}}">
+        <input type="hidden" name="search-term" value="{{searchTerm}}">
         {% if next_page != 0 %}
         <button type="submit" class="btn btn-primary">NEXT</button>
         {% else %}
