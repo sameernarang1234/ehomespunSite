@@ -10,6 +10,26 @@ import stripe
 
 # Create your views here.
 def homePage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    cart_total = 0.00
+    if username is not None:
+        print("INSIDE USERNAME")
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = float(cart_product.sale_price)
+            cart_total += float(price * quantity)
+        print(cart_total)
+
     categories = Category.objects.all()
     allProducts = Product.objects.all()
 
@@ -25,14 +45,34 @@ def homePage(request):
     
     params = {
         "categories": categories,
-        "products": products
+        "products": products,
+        "cart_total": cart_total
     }
     return render(request, 'home.html', params)
 
 def loginPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    cart_total = 0.00
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'login.html', params)
 
@@ -131,79 +171,275 @@ def userDashboard(request):
     except:
         logout(request)
         return redirect("loginPage")
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, "userDashboard.html", params)
 
 def supportPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'support.html', params)
 
 def buyerTerms(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'buyerTerms.html', params)
 
 def sellerTerms(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'sellerTerms.html', params)
 
 def refundPolicy(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'refund.html', params)
 
 def passwordReset(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'passwordReset.html', params)
 
-def userDashboard(request):
-    categories = Category.objects.all()
-    params = {
-        "categories": categories
-    }
-    return render(request, 'userDashboard.html', params)
-
 def ordersPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'ordersPage.html', params)
 
 def subscriptionsPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'subscriptionsPage.html', params)
 
 def downloadsPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'downloadsPage.html', params)
 
 def addressPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'addressPage.html', params)
 
@@ -214,6 +450,21 @@ def paymentMethodPage(request):
         logout(request)
         return redirect("loginPage")
     
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     payment_updated = False
     if request.method == "POST":
         card_number = request.POST.get("card_number")
@@ -247,7 +498,8 @@ def paymentMethodPage(request):
     categories = Category.objects.all()
     params = {
                 "payment_updated": payment_updated,
-                "categories": categories
+                "categories": categories,
+                "cart_total": cart_total
             }
 
     return render(request, 'paymentMethodPage.html', params)
@@ -259,6 +511,21 @@ def accountPage(request):
         logout(request)
         return redirect("loginPage")
     
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
     print("USER ID")
@@ -278,15 +545,36 @@ def accountPage(request):
                 "first_name": first_name,
                 "last_name": last_name,
                 "email": email,
-                "categories": categories
+                "categories": categories,
+                "cart_total": cart_total
             }
 
     return render(request, 'accountPage.html', params)
 
 def becomeSellerPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'becomeSellerPage.html', params)
 
@@ -296,6 +584,22 @@ def proDashboard(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
 
@@ -327,7 +631,8 @@ def proDashboard(request):
         "amount_orders": amount_orders,
         "num_products": num_products,
         "amount_products": amount_products,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'proDashboard.html', params)
@@ -338,6 +643,21 @@ def proProducts(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
@@ -371,7 +691,8 @@ def proProducts(request):
         "products": products,
         "next_page": next_page,
         "prev_page": prev_page,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'proProducts.html', params)
@@ -383,6 +704,21 @@ def addProduct(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     product_saved = False
 
@@ -444,6 +780,7 @@ def addProduct(request):
     params = {
         "categories": categories,
         "saved": product_saved,
+        "cart_total": cart_total
     }
     return render(request, 'addProduct.html', params)
 
@@ -453,6 +790,21 @@ def proUpdateProduct(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
     
     product_modified = False
     if request.method == "POST":
@@ -560,7 +912,8 @@ def proUpdateProduct(request):
                 "seller_id": seller_id,
                 "product": product,
                 "product_modified": product_modified,
-                "categories": categories
+                "categories": categories,
+                "cart_items": cart_items
             }
 
     return render(request, "proUpdateProduct.html", params)
@@ -571,9 +924,26 @@ def proOrders(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'proOrders.html', params)
 
@@ -583,6 +953,21 @@ def proSettings(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     settings_updated = False
 
@@ -670,7 +1055,8 @@ def proSettings(request):
         "states": states,
         "settings": settings_updated,
         "store": store,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'proSettings.html', params)
 
@@ -680,6 +1066,21 @@ def proPayments(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     paymentStatus = False
 
@@ -727,7 +1128,8 @@ def proPayments(request):
     params = {
         "paymentStatus": paymentStatus,
         "payment": payment,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'proPayments.html', params)
@@ -738,6 +1140,21 @@ def proBranding(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     images_uploaded = False
 
@@ -768,7 +1185,8 @@ def proBranding(request):
     categories = Category.objects.all()
     params = {
         "images_uploaded": images_uploaded,
-        "categories": categories
+        "categories": categories,
+        "cart_items": cart_items
     }
     return render(request, 'proBranding.html', params)
 
@@ -778,6 +1196,21 @@ def proShipping(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     shipping_enabled = False
 
@@ -894,7 +1327,8 @@ def proShipping(request):
     params = {
         "shipping_enabled": shipping_enabled,
         "shipping": shipping,
-        "category": categories
+        "category": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'proShipping.html', params)
@@ -905,6 +1339,21 @@ def proSocial(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     social_handles_updated = False
 
@@ -947,7 +1396,8 @@ def proSocial(request):
     params = {
         "social": social_handles_updated,
         "store": store,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request,"proSocial.html", params)
@@ -958,6 +1408,21 @@ def proPolicy(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     policy_updated = False
 
@@ -985,7 +1450,8 @@ def proPolicy(request):
     params = {
         "policy": policy_updated,
         "store": store,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request,"proPolicy.html", params)
@@ -996,6 +1462,21 @@ def proMembership(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     is_member = False
     username = request.session["username"]
@@ -1048,13 +1529,15 @@ def proMembership(request):
             "membership_status": store.membership_status,
             "start_date": store.membership_start_date,
             "product_count": product_count,
-            "categories": categories
+            "categories": categories,
+            "cart_total": cart_total,
         }
     else:
         params = {
             "is_member": is_member,
             "product_count": product_count,
-            "categories": categories
+            "categories": categories,
+            "cart_total": cart_total
         }
 
     return render(request,"proMembership.html", params)
@@ -1065,9 +1548,26 @@ def proRatings(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request,"proRatings.html", params)
 
@@ -1077,9 +1577,26 @@ def proRefunds(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     categories = Category.objects.all()
     params = {
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request,"proRefunds.html", params)
 
@@ -1089,6 +1606,21 @@ def proCoupons(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
@@ -1097,7 +1629,8 @@ def proCoupons(request):
     categories = Category.objects.all()
     params = {
                 "coupons": coupons,
-                "categories": categories
+                "categories": categories,
+                "cart_total": cart_total
             }
 
     return render(request,"proCoupons.html", params)
@@ -1108,6 +1641,21 @@ def proAddCoupon(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     coupon_added = False
 
@@ -1253,7 +1801,8 @@ def proAddCoupon(request):
     params = {
                 "coupon_added": coupon_added,
                 "coupon": coupon,
-                "category": categories
+                "category": categories,
+                "cart_total": cart_total
             }
 
     return render(request, 'addCoupon.html', params)
@@ -1264,6 +1813,21 @@ def proStore(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     seller = UserDatabase.objects.get(username=username)
     seller_id = seller.id
@@ -1309,11 +1873,32 @@ def proStore(request):
         "products": products,
         "store": store,
         "next_page": next_page,
-        "prev_page": prev_page
+        "prev_page": prev_page,
+        "cart_total": cart_total
     }
     return render(request, 'proStore.html', params)
 
 def categoryPage(request):
+
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
 
     category = request.GET.get('category')
     categoryDB = Category.objects.get(name=category)
@@ -1325,11 +1910,32 @@ def categoryPage(request):
     params = {
         'sub_categories': subCategories,
         'category': category,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
     return render(request, 'categoryPage.html', params)
 
 def shopPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     page = request.GET.get('page-number')
     page_number = 0
     if page == None:
@@ -1360,12 +1966,33 @@ def shopPage(request):
         "products": products,
         "next_page": next_page,
         "prev_page": prev_page,
-        "categories":categories
+        "categories":categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'shop.html', params)
 
 def productPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     review_updated = False
     if request.method != "POST":
         product_id = request.GET.get('product_id')
@@ -1434,7 +2061,8 @@ def productPage(request):
         "comments": comments,
         "shipping": shipping,
         "review_updated": review_updated,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, "product.html", params)
@@ -1445,6 +2073,8 @@ def addToCart(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
     
     if request.method == "POST":
         quantity = request.POST.get("quantity")
@@ -1481,6 +2111,8 @@ def cartPage(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
     
     user = UserDatabase.objects.get(username=username)
     buyer_id = user.id
@@ -1548,6 +2180,21 @@ def wishlist(request):
         logout(request)
         return redirect("loginPage")
     
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
     item_deleted = False
     
     if request.method == "POST":
@@ -1604,7 +2251,8 @@ def wishlist(request):
         "next_page": next_page,
         "prev_page": prev_page,
         "item_deleted": item_deleted,
-        "categories": categories
+        "categories": categories,
+        "cart_total": cart_total
     }
 
     return render(request, 'wishlistPage.html', params)
@@ -1638,13 +2286,26 @@ def addToWishlist(request):
 
 def buyerBillingAddress(request):
 
-    print("INSIDE BILLING ADDRESS VIEW")
-
     try:
         username = request.session["username"]
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
     
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
@@ -1707,20 +2368,34 @@ def buyerBillingAddress(request):
     params = {
         "states": states,
         "address_updated": address_updated,
-        "category": categories
+        "category": categories,
+        "cart_total": cart_total
     }
 
     return render(request, "buyerBillingAddress.html", params)
 
 def buyerShippingAddress(request):
 
-    print("INSIDE SHIPPING ADDRESS VIEW")
-
     try:
         username = request.session["username"]
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
     
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
@@ -1784,12 +2459,33 @@ def buyerShippingAddress(request):
     params = {
         "states": states,
         "address_updated": address_updated,
-        "category": categories
+        "category": categories,
+        "cart_total": cart_total
     }
 
     return render(request, "buyerShippingAddress.html", params)
 
 def searchProductPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        username = None
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     page = request.GET.get('page-number')
     searchTerm = request.GET.get("search-term")
     category_name = request.GET.get('category')
@@ -1855,7 +2551,8 @@ def searchProductPage(request):
         "prev_page": prev_page,
         "categories": categories,
         "allProducts": allProducts,
-        "searchTerm": searchTerm
+        "searchTerm": searchTerm,
+        "cart_total": cart_total
     }
 
     return render(request, 'shop2.html', params)
@@ -1866,6 +2563,21 @@ def checkout(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
     
     quantity = int(request.POST.get("quantity"))
     product_id = request.POST.get("product_id")
@@ -1886,7 +2598,8 @@ def checkout(request):
         "amount": amount_int,
         "key": key,
         "product": product,
-        "quantity": quantity
+        "quantity": quantity,
+        "cart_total": cart_total
     }
     return render(request, "checkout.html", params)
 
@@ -1896,6 +2609,22 @@ def charge(request):
     except:
         logout(request)
         return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
     amount = request.POST.get("amount")
     charge = stripe.Charge.create(
         amount=amount,
@@ -1903,4 +2632,7 @@ def charge(request):
         description="Payment Gateway",
         source=request.POST["stripeToken"]
     )
-    return render(request,"charge.html")
+    params = {
+        "cart_total": cart_total
+    }
+    return render(request,"charge.html", params)

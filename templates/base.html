@@ -39,7 +39,7 @@
                 Search
             </button>
         </form>
-        <a href="#" class="create-store">Create a store</a>
+        <!-- <a href="#" class="create-store">Create a store</a> -->
         <div class="navbar-sub-container">
             {% if not user.is_authenticated %}
             <div>
@@ -58,7 +58,7 @@
             </div>
             <div class="cart-div">
                 <!-- <img src="../static/assets/cart.png" rel="cart-img" class="logo-img"> -->
-                <p>Cart $0.00</p>
+                <p>Cart ${{cart_total}}</p>
             </div>
         </div>
     </div>
@@ -83,9 +83,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/cart/">Cart</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Checkout</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/support/">Support</a>
