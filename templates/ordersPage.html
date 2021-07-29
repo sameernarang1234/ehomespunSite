@@ -9,22 +9,46 @@
 
 {% block body %}
 <h1 class="main-heading">Orders</h1>
-<div class="main-container">
-    <div class="container-1">
+<div class="main-container container-fluid row">
+    <div class="container-1 col-6">
         <div class="container">
             <a href="/user-dashboard/" class="dashboard-navigation">Dashboard</a>
             <a href="/orders/" class="dashboard-navigation">Orders</a>
             <a href="/address/" class="dashboard-navigation">Addresses</a>
-            <a href="/payment-method/" class="dashboard-navigation">Payment methods</a>
             <a href="/account/" class="dashboard-navigation">Account details</a>
             <a href="/become-seller/" class="dashboard-navigation">Become a seller</a>
             <a href="/logout/" class="dashboard-navigation">Logout</a>
         </div>
     </div>
-    <div class="container-2">
-        <div class="container">
-            <h2>Hello</h2>
-            <p>From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
+    <div class="container-2 col-6">
+        <div class="container-fluid">
+            {% for product in orders %}
+            <div class="main-product-container container-fluid">
+                <div class="container-fluid product-container">
+                    <img src="{{product.product_image1}}" alt="{{product.product_title}}" class="product-image">
+                    <p class="ms-3"><strong>{{product.product_name}}</strong></p>
+                    <p class="ms-3">Price: {{product.product_currency}}{{product.product_sale_price}}</p>
+                    <p class="ms-3">Quantity: {{product.quantity}}</p>
+                </div>
+                <div class="product-container mt-3">
+                    <form action="/product/" method="GET">
+                        <input type="hidden" name="product_id" value="{{product.id}}">
+                        <button class="btn btn-primary">View Product</button>
+                    </form>
+                    <form class="non-first-button" action="/checkout-summary/" method="GET">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{product.id}}">
+                        <input type="hidden" name="quantity" value="{{product.quantity}}">
+                        <button class="btn btn-success" type="submit">Checkout</button>
+                    </form>
+                    <form class="non-first-button" action="/cart/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{product.id}}">
+                        <button class="btn btn-danger" type="submit">Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>

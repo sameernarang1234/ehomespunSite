@@ -21,7 +21,7 @@ class UserDatabase(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, default='')
     email = models.CharField(max_length=50, default="")
-    user_type = models.CharField(max_length=50, default="")
+    user_type = models.CharField(max_length=50, default="BUYER")
 
     def __str__(self):
         return self.username
@@ -88,12 +88,16 @@ class StoreState(models.Model):
 
 class SellerPaymentDetail(models.Model):
     seller_id = models.IntegerField(primary_key=True, default=0)
-    paypal_client_id = models.CharField(max_length=500, default="")
-    stripe_public_key = models.CharField(max_length=500, default="")
-    stripe_private_key = models.CharField(max_length=500, default="")
+    paypal_address = models.CharField(max_length=50, default='')
+    bank_account_name = models.CharField(max_length=50, default='')
+    bank_account_number = models.CharField(max_length=50, default="")
+    bank_name = models.CharField(max_length=50, default="")
+    bank_routing_number = models.CharField(max_length=50, default="")
+    bank_IBAN = models.CharField(max_length=50, default="")
+    bank_BIC_SWIFT = models.CharField(max_length=50, default="")
 
     def __str__(self):
-        return str(self.seller_id)
+        return self.paypal_address
 
 class Shipping(models.Model):
     seller_id = models.IntegerField(primary_key=True, default=0)
@@ -115,18 +119,6 @@ class Shipping(models.Model):
 
     def __str__(self):
         return str(self.seller_id)
-
-
-class Order(models.Model):
-    id = models.AutoField(primary_key=True)
-    product_id = models.IntegerField(default=0)
-    seller_id = models.IntegerField(default=0)
-    buyer_id = models.IntegerField(default=0)
-    tax = models.CharField(max_length=10, default="")
-    price = models.CharField(max_length=10, default="")
-
-    def __str__(self):
-        return str(self.id)
 
 class Coupon(models.Model):
     id = models.AutoField(primary_key=True)
@@ -219,13 +211,67 @@ class BuyerBillingAddress(models.Model):
     def __str__(self):
         return self.first_name
 
-class BuyerPaymentDetail(models.Model):
+class AdminPaymentDetail(models.Model):
+    id = models.AutoField(primary_key=True, default=1)
+    stripe_public_key = models.CharField(max_length=500, default="")
+    stripe_private_key = models.CharField(max_length=500, default="")
+
+class Order(models.Model):
     id = models.AutoField(primary_key=True)
+    seller_id = models.IntegerField(default=0)
+    seller_name = models.CharField(default="", max_length=50)
+    seller_paypal = models.CharField(default="", max_length=100)
     buyer_id = models.IntegerField(default=0)
-    card_number = models.CharField(max_length=30, default="")
-    expiry = models.CharField(max_length=10, default="")
-    cvv = models.CharField(max_length=5, default="")
+    buyer_name = models.CharField(max_length=50, default="")
+    product_id = models.IntegerField(default=0)
+    product_name = models.CharField(max_length=100, default="")
+    product_description = models.TextField(default="")
+    product_short_description = models.TextField(default="")
+    product_category_name = models.CharField(max_length=50, default="")
+    product_image1 = models.ImageField(upload_to="product/images",  default="")
+    product_image2 = models.ImageField(upload_to="product/images",  default="")
+    product_image3 = models.ImageField(upload_to="product/images",  default="")
+    product_type = models.CharField(max_length=50, default="")
+    product_price = models.CharField(max_length=10, default="")
+    product_sale_price = models.CharField(max_length=10, default="")
+    product_tax_status = models.CharField(max_length=20, default="")
+    product_tax_class = models.CharField(max_length=20, default="")
+    currency = models.CharField(max_length=5,  default="$")
+    quantity = models.IntegerField(default=0)
+    total_tax = models.IntegerField(default=0)
+    total_cost = models.IntegerField(default=0)
+    first_name = models.CharField(max_length=50, default="")
+    last_name = models.CharField(max_length=50, default="")
+    country = models.CharField(max_length=50, default="")
+    address = models.TextField(default="")
+    state = models.CharField(max_length=50, default="")
+    city = models.CharField(max_length=50, default="")
+    postcode = models.CharField(max_length=50, default="")
+    phone = models.CharField(max_length=50, default="")
+    email = models.CharField(max_length=50, default="")
+
 
     def __str__(self):
-        return str(self.buyer_id)
+        return self.buyer_name
 
+class AdminTaxRules(models.Model):
+    id = models.AutoField(primary_key=True)
+    standard_class_tax_percentage = models.CharField(max_length=10, default="")
+    reduced_rate_class_tax_percentage = models.CharField(max_length=10, default="")
+
+    def __str__(self):
+        return "Tax Percentage"
+
+class BuyerState(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(default="", max_length=50)
+
+    def __str__(self):
+        return self.name
+
+class MembershipPrice(models.Model):
+    annual_membership_price = models.CharField(max_length=10, default="9.99")
+    monthly_membership_price = models.CharField(max_length=10, default="4.99")
+
+    def __str__(self):
+        return "Membership Price"

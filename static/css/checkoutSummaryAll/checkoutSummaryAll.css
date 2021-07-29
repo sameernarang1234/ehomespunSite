@@ -1,0 +1,28 @@
+.logo-img {
+    display: block;
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    border-radius: 20px;
+}
+
+span {
+    color: red;
+}
+
+.main-container {
+    background-color: lightgray;
+    border-radius: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 50px;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.total-amount {
+    text-align: center;
+}

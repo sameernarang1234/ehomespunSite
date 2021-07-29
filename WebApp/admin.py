@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerAddress, BuyerBillingAddress, BuyerPaymentDetail
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerAddress, BuyerBillingAddress, AdminPaymentDetail, BuyerState, MembershipPrice
 
 # Register your models here.
 admin.site.register(Category)
@@ -18,4 +18,6 @@ admin.site.register(Cart)
 admin.site.register(Wishlist)
 admin.site.register(BuyerAddress)
 admin.site.register(BuyerBillingAddress)
-admin.site.register(BuyerPaymentDetail)
+admin.site.register(AdminPaymentDetail)
+admin.site.register(BuyerState)
+admin.site.register(MembershipPrice)

@@ -52,18 +52,26 @@
     <br>
     <form action="/pro-payments/" method="POST">
 		{% csrf_token %}
-        <h3>PayPal Account details</h3>
-        <p><strong>Client ID <span>*</span></strong></p>
-		<input placeholder="{{payment.paypal_client_id}}" class="form-control" name="paypal_client_id" type="password">
-        <br>
-        
-        <h3>Stripe Account Details</h3>
-        <p><strong>Account Public Key <span>*</span></strong></p>
-		<input class="form-control" placeholder="{{payment.stripe_public_key}}" name="stripe_public_key" type="password">
-        <br>
+        <p><strong>PayPal Address <span>*</span></strong></p>
+		<input class="form-control mb-4" name="paypal_address" placeholder="{{payment.paypal_address}}" type="email">
 
-        <p><strong>Account Private Key <span>*</span></strong></p>
-		<input class="form-control" name="stripe_private_key" placeholder="{{payment.stripe_private_key}}" type="password">
+        <p><strong>Bank account name  <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_account_name" placeholder="{{payment.bank_account_name}}" type="text">
+
+        <p><strong>Bank account number <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_account_number" placeholder="{{payment.bank_account_number}}" type="text">
+
+        <p><strong>Bank name <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_name" placeholder="{{payment.bank_name}}" type="text">
+
+        <p><strong>Bank routing number <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_routing_number" placeholder="{{payment.bank_routing_number}}" type="text">
+
+        <p><strong>Bank IBAN <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_IBAN" placeholder="{{payment.bank_IBAN}}" type="text">
+
+        <p><strong>Bank BIC/SWIFT <span>*</span></strong></p>
+		<input class="form-control mb-4" name="bank_BIC_SWIFT" placeholder="{{payment.bank_BIC_SWIFT}}" type="text">
 
         <button class="btn btn-primary my-4" type="submit">Save Changes</button>
     </form>

@@ -18,7 +18,11 @@
 
 {% block body %}
 <div class="container main-shop-container">
-	<h1><strong>Your Shopping Cart</strong> (Cart Total: ${{cart_total}})</h1>
+	<h1 class="mt-3"><strong>Your Shopping Cart</strong> (Cart Total: ${{cart_total}})</h1>
+    <form class="my-4" action="/checkout-all-summary/" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-success" type="submit">Checkout All</button>
+    </form>
         {% for product in cart_items %}
         <div class="main-product-container container-fluid">
 			<div class="container-fluid product-container">
@@ -32,7 +36,7 @@
                     <input type="hidden" name="product_id" value="{{product.product.id}}">
                     <button class="btn btn-primary">View Product</button>
                 </form>
-                <form class="ms-3" action="/checkout/" method="POST">
+                <form class="ms-3" action="/checkout-summary/" method="GET">
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{product.product.id}}">
                     <input type="hidden" name="quantity" value="{{product.quantity}}">

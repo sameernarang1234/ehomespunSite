@@ -1,5 +1,6 @@
+from django.db.models.enums import IntegerChoices
 from django.shortcuts import render, redirect
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, BuyerPaymentDetail
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, AdminPaymentDetail, Order, AdminTaxRules, BuyerState, MembershipPrice
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -334,27 +335,28 @@ def ordersPage(request):
     try:
         username = request.session["username"]
     except:
-        username = None
+        logout(request)
+        return redirect("loginPage")
     
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
     cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
 
-    if username is not None:
-        user = UserDatabase.objects.get(username=username)
-        buyer_id = user.id
-        cart_items = Cart.objects.filter(buyer_id=buyer_id)
-
-        cart_total = 0.00
-        for cart_item in cart_items:
-            product_id = cart_item.product_id
-            quantity = cart_item.product_quantity
-            cart_product = Product.objects.get(id=product_id)
-            price = cart_product.sale_price
-            cart_total += float(price * quantity)
+    orders = Order.objects.filter(buyer_id=buyer_id)
     
     categories = Category.objects.all()
     params = {
         "categories": categories,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "orders": orders
     }
     return render(request, 'ordersPage.html', params)
 
@@ -443,67 +445,6 @@ def addressPage(request):
     }
     return render(request, 'addressPage.html', params)
 
-def paymentMethodPage(request):
-    try:
-        username = request.session["username"]
-    except:
-        logout(request)
-        return redirect("loginPage")
-    
-    cart_total = 0.00
-    
-    if username is not None:
-        user = UserDatabase.objects.get(username=username)
-        buyer_id = user.id
-        cart_items = Cart.objects.filter(buyer_id=buyer_id)
-
-        cart_total = 0.00
-        for cart_item in cart_items:
-            product_id = cart_item.product_id
-            quantity = cart_item.product_quantity
-            cart_product = Product.objects.get(id=product_id)
-            price = cart_product.sale_price
-            cart_total += float(price * quantity)
-
-    payment_updated = False
-    if request.method == "POST":
-        card_number = request.POST.get("card_number")
-        expiry = request.POST.get("expiry")
-        cvv = request.POST.get("cvv")
-        
-        buyer = UserDatabase.objects.get(username=username)
-        buyer_id = buyer.id
-
-        try:
-            payment = BuyerPaymentDetail.objects.get(buyer_id=buyer_id)
-        except:
-            payment = None
-
-        if payment == None:
-            newPayment = BuyerPaymentDetail(
-                    buyer_id=buyer_id,
-                    card_number=card_number,
-                    expiry=expiry,
-                    cvv=cvv
-            )
-            newPayment.save()
-        else:
-            payment.card_number = card_number
-            payment.expiry = expiry
-            payment.cvv = cvv
-            payment.save()
-
-        payment_updated = True
-
-    categories = Category.objects.all()
-    params = {
-                "payment_updated": payment_updated,
-                "categories": categories,
-                "cart_total": cart_total
-            }
-
-    return render(request, 'paymentMethodPage.html', params)
-
 def accountPage(request):
     try:
         username = request.session["username"]
@@ -528,13 +469,15 @@ def accountPage(request):
 
     user = UserDatabase.objects.get(username=username)
     user_id = user.id
-    print("USER ID")
-    print(user_id)
     
     try:
         buyerAddress = BuyerAddress.objects.get(user_id=user_id)
     except:
-        return render(request, "accountPage.html")
+        categories = Category.objects.all()
+        params = {
+            "categories": categories,
+        }
+        return render(request, "accountPage.html", params)
 
     first_name = buyerAddress.first_name
     last_name = buyerAddress.last_name
@@ -571,6 +514,14 @@ def becomeSellerPage(request):
             cart_product = Product.objects.get(id=product_id)
             price = cart_product.sale_price
             cart_total += float(price * quantity)
+
+    if request.method == "POST":
+        user = UserDatabase.objects.get(username=username)
+        user.user_type = "MERCHANT"
+        user.save()
+
+        return redirect("proSettings")
+    
     categories = Category.objects.all()
     params = {
         "categories": categories,
@@ -685,14 +636,20 @@ def proProducts(request):
     else:
         products = allProducts[start_index:end_index]
         next_page = page_number + 1
-    
+
+    store = Store.objects.get(seller_id=user_id)
+    is_member = True
+    if store.membership_status == "inactive":
+        is_member = False
+
     categories = Category.objects.all()
     params = {
         "products": products,
         "next_page": next_page,
         "prev_page": prev_page,
         "categories": categories,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "is_member": is_member
     }
 
     return render(request, 'proProducts.html', params)
@@ -1088,9 +1045,13 @@ def proPayments(request):
     seller_id = seller.id
 
     if request.method == "POST":
-        paypal_client_id = request.POST.get("paypal_client_id")
-        stripe_public_key = request.POST.get("stripe_public_key")
-        stripe_private_key = request.POST.get("stripe_private_key")
+        paypal_address = request.POST.get("paypal_address")
+        bank_account_name = request.POST.get("bank_account_name")
+        bank_account_number = request.POST.get("bank_account_number")
+        bank_name = request.POST.get("bank_name")
+        bank_routing_number = request.POST.get("bank_routing_number")
+        bank_IBAN = request.POST.get("bank_IBAN")
+        bank_BIC_SWIFT = request.POST.get("bank_BIC_SWIFT")
 
         try:
             prevPayment = SellerPaymentDetail.objects.get(seller_id=seller_id)
@@ -1100,20 +1061,30 @@ def proPayments(request):
         if prevPayment is None:
             payment = SellerPaymentDetail(
                 seller_id = seller_id,
-                paypal_client_id=paypal_client_id,
-                stripe_public_key=stripe_public_key,
-                stripe_private_key=stripe_private_key
+                paypal_address=paypal_address,
+                bank_account_name=bank_account_name,
+                bank_routing_number=bank_routing_number,
+                bank_account_number=bank_account_number,
+                bank_name=bank_name,
+                bank_IBAN=bank_IBAN,
+                bank_BIC_SWIFT=bank_BIC_SWIFT
             )
             payment.save()
         else:
-            if paypal_client_id != "":
-                prevPayment.paypal_client_id = paypal_client_id
-
-            if stripe_public_key != "":
-                prevPayment.stripe_public_key = stripe_public_key
-
-            if stripe_private_key != "":
-                prevPayment.stripe_private_key = stripe_private_key
+            if paypal_address != "":
+                prevPayment.paypal_address = paypal_address
+            if bank_account_name != "":
+                prevPayment.bank_account_name = bank_account_name
+            if bank_account_number != "":
+                prevPayment.bank_account_number = bank_account_number
+            if bank_routing_number != "":
+                prevPayment.bank_routing_number = bank_routing_number
+            if bank_name != "":
+                prevPayment.bank_name = bank_name
+            if bank_IBAN != "":
+                prevPayment.bank_IBAN = bank_IBAN
+            if bank_BIC_SWIFT != "":
+                prevPayment.bank_BIC_SWIFT = bank_BIC_SWIFT
 
             prevPayment.save()
 
@@ -1478,7 +1449,6 @@ def proMembership(request):
             price = cart_product.sale_price
             cart_total += float(price * quantity)
 
-    is_member = False
     username = request.session["username"]
     user = UserDatabase.objects.get(username=username)
     seller_id = user.id
@@ -1489,23 +1459,14 @@ def proMembership(request):
     except:
         store = None
 
-    if request.method == "POST":
-        membership_type = request.POST.get("membership-type")
-
-        store.membership_type = membership_type
-        store.membership_status = "active"
-        store.membership_start_date = date.today()
-
-        store.save()
-
-        is_member = True
-
     products = Product.objects.filter(seller_id=seller_id)
     product_count = 0
     for product in products:
         product_count += 1
     
     categories = Category.objects.all()
+
+    membership_prices = MembershipPrice.objects.get()
 
     if store is not None:
         if store.membership_type == "ANNUAL SELLER MEMBERSHIP":
@@ -1524,20 +1485,20 @@ def proMembership(request):
         store.save()
 
         params = {
-            "is_member": is_member,
             "membership_type": store.membership_type,
             "membership_status": store.membership_status,
             "start_date": store.membership_start_date,
             "product_count": product_count,
             "categories": categories,
             "cart_total": cart_total,
+            "membership_prices": membership_prices
         }
     else:
         params = {
-            "is_member": is_member,
             "product_count": product_count,
             "categories": categories,
-            "cart_total": cart_total
+            "cart_total": cart_total,
+            "membership_prices": membership_prices
         }
 
     return render(request,"proMembership.html", params)
@@ -2557,7 +2518,46 @@ def searchProductPage(request):
 
     return render(request, 'shop2.html', params)
 
+def checkoutSummary(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    product_id = request.GET.get("product_id")
+    product = Product.objects.get(id=product_id)
+    quantity = request.GET.get("quantity")
+    buyer_states = BuyerState.objects.all()
+
+    amount = float(product.sale_price) * float(quantity)
+    tax_percentage = 0.00
+    if product.tax_status == "Taxable":
+        try:
+            tax = AdminTaxRules.objects.get()
+        except:
+            tax = None
+        if tax is not None:
+            if product.tax_class == "Standard":
+                amount += float(tax.standard_class_tax_percentage) * amount
+                tax_percentage = float(tax.standard_class_tax_percentage)
+            elif product.tax_class == "Reduced Rate":
+                amount += float(tax.reduced_rate_class_tax_percentage) * amount
+                tax_percentage = float(tax.reduced_rate_class_tax_percentage)
+    
+
+    params = {
+        "product": product,
+        "quantity": quantity,
+        "states": buyer_states,
+        "amount": amount,
+        "tax": tax_percentage
+    }
+
+    return render(request, "checkoutSummary.html", params)
+
 def checkout(request):
+    print("PRODUCT CHECKOUT")
     try:
         username = request.session["username"]
     except:
@@ -2566,41 +2566,96 @@ def checkout(request):
     
     cart_total = 0.00
 
-    if username is not None:
-        user = UserDatabase.objects.get(username=username)
-        buyer_id = user.id
-        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
 
-        cart_total = 0.00
-        for cart_item in cart_items:
-            product_id = cart_item.product_id
-            quantity = cart_item.product_quantity
-            cart_product = Product.objects.get(id=product_id)
-            price = cart_product.sale_price
-            cart_total += float(price * quantity)
-    
-    quantity = int(request.POST.get("quantity"))
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    first_name = request.POST.get("first-name")
+    last_name = request.POST.get("last-name")
+    company_name = request.POST.get("company-name")
+    country = request.POST.get("country")
+    address = request.POST.get("address")
+    city = request.POST.get("city")
+    state = request.POST.get("state")
+    postCode = request.POST.get("postcode")
+    phone = request.POST.get("phone")
+    email = request.POST.get("email")
     product_id = request.POST.get("product_id")
+    quantity = request.POST.get("quantity")
+    amount = float(request.POST.get("amount"))
+    tax = float(request.POST.get("tax"))
+
+    shipping = "NATIONAL"
+
+    disabled = False
+    if country != "United States (US)":
+        shipping = "INTERNATIONAL"
+    
     product = Product.objects.get(id=product_id)
-    price = float(product.sale_price)
-
-    amount = float(quantity) * price
-    amount_int = int(amount)*100
-
     seller_id = product.seller_id
-    sellerPaymentDetails = SellerPaymentDetail.objects.get(seller_id=seller_id)
+    try:
+        seller = Shipping.objects.get(seller_id=seller_id)
 
-    stripe.api_key = sellerPaymentDetails.stripe_private_key
+        if shipping == "NATIONAL":
+            if seller.disable_national_shipping == "on":
+                disabled = True
+                params = {
+                    "disabled": disabled,
+                }
+                return render(request, "checkoutSummary.html", params)
+            else:
+                if seller.national_free_shipping_enabled != "on":
+                    amount += float(seller.national_shipping_fee)
+        else:
+            if seller.disable_international_shipping == "on":
+                disabled = True
+                params = {
+                    "disabled": disabled,
+                }
+                return render(request, "checkoutSummary.html", params)
+            else:
+                if seller.international_free_shipping_enabled != "on":
+                    amount += float(seller.international_shipping_fee)
+    except:
+        print()
 
-    key = sellerPaymentDetails.stripe_public_key
+
+    adminPaymentDetails = AdminPaymentDetail.objects.get()
+
+    stripe.api_key = adminPaymentDetails.stripe_private_key
+
+    key = adminPaymentDetails.stripe_public_key
+
+    total_tax = tax * amount
+    amount_int = int(amount * 100)
 
     params = {
-        "amount": amount_int,
+        "amount_int": amount_int,
+        "amount": amount,
         "key": key,
         "product": product,
         "quantity": quantity,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "first_name": first_name,
+        "last_name": last_name,
+        "country": country,
+        "address": address,
+        "city": city,
+        "state": state,
+        "postcode": postCode,
+        "phone": phone,
+        "email": email,
+        "total_tax": total_tax
     }
+    
     return render(request, "checkout.html", params)
 
 def charge(request):
@@ -2625,14 +2680,461 @@ def charge(request):
             price = cart_product.sale_price
             cart_total += float(price * quantity)
 
-    amount = request.POST.get("amount")
-    charge = stripe.Charge.create(
-        amount=amount,
-        currency="inr",
-        description="Payment Gateway",
-        source=request.POST["stripeToken"]
-    )
+    if request.method == "POST":
+        amount = float(request.POST.get("amount"))
+        amount_int = int(amount * 100)
+        charge = stripe.Charge.create(
+            amount=amount_int,
+            currency="inr",
+            description="Payment Gateway",
+            source=request.POST["stripeToken"]
+        )
+
+        total_cost = float(amount_int) / 100
+
+        product_id = request.POST.get("product_id")
+        product = Product.objects.get(id=product_id)
+        category_id = product.category_id
+        category = Category.objects.get(id=category_id)
+        category_name = category.name
+        seller_id = product.seller_id
+        seller = UserDatabase.objects.get(id=seller_id)
+        seller_name = seller.username
+        buyer = UserDatabase.objects.get(username=username)
+        buyer_id = buyer.id
+        buyer_name=buyer.username
+
+        payment = SellerPaymentDetail.objects.get(seller_id=seller_id)
+        quantity=request.POST.get('quantity')
+
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        country = request.POST.get("country")
+        address = request.POST.get("address")
+        state = request.POST.get("state")
+        city = request.POST.get("city")
+        postcode = request.POST.get("postcode")
+        phone=request.POST.get("phone")
+        email = request.POST.get("email")
+        total_tax = request.POST.get("total_tax")
+
+        order = Order(
+            seller_id=seller_id,
+            seller_name=seller_name,
+            seller_paypal=payment.paypal_address,
+            buyer_id=buyer_id,
+            buyer_name=buyer_name,
+            product_id = product.id,
+            product_name=product.name,
+            product_description=product.description,
+            product_short_description=product.short_description,
+            product_category_name=category_name,
+            product_image1=product.image1,
+            product_image2=product.image2,
+            product_image3=product.image3,
+            product_price=product.price,
+            product_sale_price=product.sale_price,
+            product_tax_status=product.tax_status,
+            product_tax_class=product.tax_class,
+            currency="$",
+            quantity=quantity,
+            first_name=first_name,
+            last_name=last_name,
+            country=country,
+            address=address,
+            state=state,
+            city=city,
+            postcode=postcode,
+            phone=phone,
+            email=email,
+            total_cost=total_cost,
+            total_tax=total_tax
+        )
+        order.save()
+
+        cart_item = Cart.objects.get(product_id=product.id)
+        cart_item.delete()
+
+    return redirect("ordersPage")
+
+def checkoutAllSummary(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    total_amount = 0.00
+    products = []
+    total_tax = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        product = Product.objects.get(id=product_id)
+        quantity = cart_item.product_quantity
+        buyer_states = BuyerState.objects.all()
+
+        amount = float(product.sale_price) * float(quantity)
+        tax_percentage = 0.00
+        if product.tax_status == "Taxable":
+            try:
+                tax = AdminTaxRules.objects.get()
+            except:
+                tax = None
+            if tax is not None:
+                if product.tax_class == "Standard":
+                    amount += float(tax.standard_class_tax_percentage) * amount
+                    total_tax += float(tax.standard_class_tax_percentage) * amount
+                    tax_percentage = tax.standard_class_tax_percentage
+                elif product.tax_class == "Reduced Rate":
+                    amount += float(tax.reduced_rate_class_tax_percentage) * amount
+                    total_tax += float(tax.standard_class_tax_percentage) * amount
+                    tax_percentage = tax.reduced_rate_class_tax_percentage
+        
+        total_amount += amount
+        product_data = {
+            "product": product,
+            "quantity": quantity,
+            "tax": tax_percentage,
+            "amount": amount
+        }
+        products.append(product_data)
+    
+
     params = {
-        "cart_total": cart_total
+        "products_data": products,
+        "states": buyer_states,
+        "total_amount": total_amount,
+        "total_tax": total_tax
     }
-    return render(request,"charge.html", params)
+
+    return render(request, "checkoutSummaryAll.html", params)
+
+def checkoutAll(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    frontend_products = []
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+        product = Product.objects.get(id=product_id)
+        frontend_data = {
+            "product": product,
+            "quantity": cart_item.product_quantity,
+        }
+        frontend_products.append(frontend_data)
+
+    first_name = request.POST.get("first-name")
+    last_name = request.POST.get("last-name")
+    company_name = request.POST.get("company-name")
+    country = request.POST.get("country")
+    address = request.POST.get("address")
+    city = request.POST.get("city")
+    state = request.POST.get("state")
+    postCode = request.POST.get("postcode")
+    phone = request.POST.get("phone")
+    email = request.POST.get("email")
+    total_amount = float(request.POST.get("total_amount"))
+
+    for cart_item in cart_items:
+        shipping = "NATIONAL"
+
+        disabled = False
+        if country != "United States (US)":
+            shipping = "INTERNATIONAL"
+        
+        product_id = cart_item.product_id
+        product = Product.objects.get(id=product_id)
+        seller_id = product.seller_id
+        amount = float(product.sale_price) * float(cart_item.product_quantity)
+        try:
+            seller = Shipping.objects.get(seller_id=seller_id)
+
+            if shipping == "NATIONAL":
+                if seller.disable_national_shipping == "on":
+                    disabled = True
+                    params = {
+                        "disabled": disabled,
+                        "product": product
+                    }
+                    return render(request, "checkoutSummaryAll.html", params)
+                else:
+                    if seller.national_free_shipping_enabled != "on":
+                        total_amount += float(seller.national_shipping_fee)
+            else:
+                if seller.disable_international_shipping == "on":
+                    disabled = True
+                    params = {
+                        "disabled": disabled,
+                        "product": product
+                    }
+                    return render(request, "checkoutSummary.html", params)
+                else:
+                    if seller.international_free_shipping_enabled != "on":
+                        total_amount += float(seller.international_shipping_fee)
+        except:
+            print()
+        
+
+
+
+    adminPaymentDetails = AdminPaymentDetail.objects.get()
+
+    stripe.api_key = adminPaymentDetails.stripe_private_key
+
+    key = adminPaymentDetails.stripe_public_key
+
+    amount_int = int(total_amount * 100)
+
+    params = {
+        "amount_int": amount_int,
+        "amount": total_amount,
+        "key": key,
+        "cart_total": cart_total,
+        "first_name": first_name,
+        "last_name": last_name,
+        "country": country,
+        "address": address,
+        "city": city,
+        "state": state,
+        "postcode": postCode,
+        "phone": phone,
+        "email": email,
+        "products": frontend_products
+    }
+    
+    return render(request, "checkoutAll.html", params)
+
+def chargeAll(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
+    if request.method == "POST":
+        amount = float(request.POST.get("amount"))
+        amount_int = int(amount * 100)
+        charge = stripe.Charge.create(
+            amount=amount_int,
+            currency="inr",
+            description="Payment Gateway",
+            source=request.POST["stripeToken"]
+        )
+
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            product = Product.objects.get(id=product_id)
+            category_id = product.category_id
+            category = Category.objects.get(id=category_id)
+            category_name = category.name
+            seller_id = product.seller_id
+            seller = UserDatabase.objects.get(id=seller_id)
+            seller_name = seller.username
+            buyer = UserDatabase.objects.get(username=username)
+            buyer_id = buyer.id
+            buyer_name=buyer.username
+
+            payment = SellerPaymentDetail.objects.get(seller_id=seller_id)
+            quantity=cart_item.product_quantity
+
+            first_name = request.POST.get("first_name")
+            last_name = request.POST.get("last_name")
+            country = request.POST.get("country")
+            address = request.POST.get("address")
+            state = request.POST.get("state")
+            city = request.POST.get("city")
+            postcode = request.POST.get("postcode")
+            phone=request.POST.get("phone")
+            email = request.POST.get("email")
+
+            tax_percentage = 0.00
+            if product.tax_status == "Taxable":
+                try:
+                    tax = AdminTaxRules.objects.get()
+                except:
+                    tax = None
+                if tax is not None:
+                    if product.tax_class == "Standard":
+                        tax_percentage = float(tax.standard_class_tax_percentage)
+                    elif product.tax_class == "Reduced Rate":
+                        tax_percentage = float(tax.reduced_rate_class_tax_percentage)
+            total_tax = tax_percentage * float(product.sale_price)
+            total_cost = float(product.sale_price) + total_tax
+            
+
+            order = Order(
+                seller_id=seller_id,
+                seller_name=seller_name,
+                seller_paypal=payment.paypal_address,
+                buyer_id=buyer_id,
+                buyer_name=buyer_name,
+                product_id = product.id,
+                product_name=product.name,
+                product_description=product.description,
+                product_short_description=product.short_description,
+                product_category_name=category_name,
+                product_image1=product.image1,
+                product_image2=product.image2,
+                product_image3=product.image3,
+                product_price=product.price,
+                product_sale_price=product.sale_price,
+                product_tax_status=product.tax_status,
+                product_tax_class=product.tax_class,
+                currency="$",
+                quantity=quantity,
+                first_name=first_name,
+                last_name=last_name,
+                country=country,
+                address=address,
+                state=state,
+                city=city,
+                postcode=postcode,
+                phone=phone,
+                email=email,
+                total_cost=total_cost,
+                total_tax=total_tax
+            )
+            order.save()
+
+            cart_item = Cart.objects.get(product_id=product.id)
+            cart_item.delete()
+
+    return redirect("ordersPage")
+
+def checkoutMembership(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    cart_total = 0.00
+
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    frontend_products = []
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+        product = Product.objects.get(id=product_id)
+        frontend_data = {
+            "product": product,
+            "quantity": cart_item.product_quantity,
+        }
+        frontend_products.append(frontend_data)
+
+    membership_type = request.POST.get("membership-type")
+    membership_price = float(request.POST.get("membership-price"))
+
+    adminPaymentDetails = AdminPaymentDetail.objects.get()
+
+    stripe.api_key = adminPaymentDetails.stripe_private_key
+
+    key = adminPaymentDetails.stripe_public_key
+
+    params = {
+        "key": key,
+        "cart_total": cart_total,
+        "amount": membership_price,
+        "membership_type": membership_type
+    }
+    
+    return render(request, "checkoutMembership.html", params)
+
+def chargeMembership(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    cart_total = 0.00
+    
+    if username is not None:
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
+    if request.method == "POST":
+        amount = float(request.POST.get("amount"))
+        amount_int = int(amount * 100)
+        charge = stripe.Charge.create(
+            amount=amount_int,
+            currency="inr",
+            description="Payment Gateway",
+            source=request.POST["stripeToken"]
+        )
+        membership_type = request.POST.get("membership-type")
+
+        user = UserDatabase.objects.get(username=username)
+        user_id = user.id
+
+        try:
+            store = Store.objects.get(seller_id=user_id)
+        except:
+            store = None
+        
+        if store is not None:
+            store.membership_status = "active"
+            store.membership_type = membership_type
+            store.membership_start_date = date.today()
+
+            store.save()
+        else:
+            store = Store(
+                membership_status="active",
+                membership_type=membership_type,
+                membership_start_date=date.today()
+            )
+            store.save()
+
+
+
+    return redirect("proDashboard")

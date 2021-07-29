@@ -20,15 +20,9 @@
 <div class="container main-shop-container">
     <h1><strong>Checkout</strong></h1>
     <div class="container-fluid product-container">
-        <img src="{{product.image1}}" alt="{{product.title}}" class="product-image">
-        <p><strong>{{product.name}}</strong></p>
-        <p>Total Amount: {{product.currency}}{{amount}}</p>
-        <p>Quantity: {{quantity}}</p>
         <form method="post" action="/charge/">
             {% csrf_token %}
             <input type="hidden" name="amount" value="{{amount}}">
-            <input type="hidden" name="quantity" value="{{quantity}}">
-            <input type="hidden" name="product_id" value="{{product.id}}">
             <input type="hidden" name="first_name" value="{{first_name}}">
             <input type="hidden" name="last_name" value="{{last_name}}">
             <input type="hidden" name="country" value="{{country}}">
@@ -51,6 +45,12 @@
             </script>
     
         </form>
+        {% for product in products %}
+        <img src="{{product.product.image1}}" alt="{{product.product.title}}" class="product-image mt-4">
+        <p><strong>{{product.product.name}}</strong></p>
+        <p>Price: {{product.product.currency}}{{product.product.sale_price}}</p>
+        <p>Quantity: {{product.quantity}}</p>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

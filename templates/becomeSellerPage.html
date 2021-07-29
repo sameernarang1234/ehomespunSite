@@ -15,7 +15,6 @@
             <a href="/user-dashboard/" class="dashboard-navigation">Dashboard</a>
             <a href="/orders/" class="dashboard-navigation">Orders</a>
             <a href="/address/" class="dashboard-navigation">Addresses</a>
-            <a href="/payment-method/" class="dashboard-navigation">Payment methods</a>
             <a href="/account/" class="dashboard-navigation">Account details</a>
             <a href="/become-seller/" class="dashboard-navigation">Become a seller</a>
             <a href="/logout/" class="dashboard-navigation">Logout</a>
@@ -23,8 +22,11 @@
     </div>
     <div class="container-2">
         <div class="container">
-            <h2>Hello</h2>
-            <p>From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
+            <h2 class="my-4">Hello. Please click proceed in order to begin a new journey!</h2>
+            <form action="/become-seller/" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-success">Proceed!</button>
+            </form>
         </div>
     </div>
 </div>

@@ -80,11 +80,12 @@
             
             <p class="membership-details">This Premium 1 Year Seller Membership gives you access to your own shop to list as many products as you wish, without the additional fees! Features include: -unlimited product space -  -no listing fees -  -no commission fees -  -no advertising fees -  -comprehensive Pro Dashboard -  -customizable shipping - so you can ship the way you need -  -create your own coupons for anything or anyone you want -  -link your Social Shop pages (Facebook, Twitter, Instagram, LinkedIn, YouTube, Pinterest, Snapchat, Telegram). And so much more! -  -Also, Premium members will be eligible to receive exclusive offers and deals!</p>
 
-            <h3>COST: <strong>$0.99</strong> / year</h3>
+            <h3>COST: <strong>${{membership_prices.annual_membership_price}}</strong> / year</h3>
 
-            <form action="/pro-membership/" method="POST">
+            <form action="/checkout-membership/" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="membership-type" value="ANNUAL SELLER MEMBERSHIP">
+                <input type="hidden" name="membership-price" value="{{membership_prices.annual_membership_price}}">
                 {% if membership_type != "ANNUAL SELLER MEMBERSHIP" %}
                 <button class="btn btn-primary mb-3" type="submit">Upgrade Plan</button>
                 {% endif %}
@@ -95,11 +96,12 @@
 
             <p class="membership-details"><strong>30 Day Seller Membership</strong> Gives you access to your own shop to list as many products as you wish, without the additional fees! Features include: unlimited product space -  no listing fees -  no commission fees -  no advertising fees -  comprehensive Pro Dashboard -  customizable shipping, so you can ship the way you need -  create your own coupons for anything or anyone you want -  link your Social pages (Facebook, Twitter, Instagram, LinkedIn, YouTube, Pinterest, Snapchat, Telegram). And so much more!</p>
 
-            <h3>COST: <strong>$4.99</strong> / month</h3>
+            <h3>COST: <strong>${{membership_prices.monthly_membership_price}}</strong> / month</h3>
 
-            <form action="/pro-membership/" method="POST">
+            <form action="/checkout-membership/" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="membership-type" value="MONTHLY SELLER MEMBERSHIP">
+                <input type="hidden" name="membership-price" value="{{membership_prices.monthly_membership_price}}">
                 {% if membership_type != "MONTHLY SELLER MEMBERSHIP" %}
                 <button class="btn btn-primary mb-3" type="submit">Upgrade Plan</button>
                 {% endif %}

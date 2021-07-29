@@ -30,7 +30,11 @@
 
 <div class="container mx-auto main-container">
     <form action="/add-product/" method="get">
+        {% if is_member %}
         <button class="add-product-btn" type="submit">ADD PRODUCT</button>
+        {% else %}
+        <button class="add-product-btn disabled" type="submit" disabled>ADD PRODUCT</button>
+        {% endif %}
     </form>
 </div>
 

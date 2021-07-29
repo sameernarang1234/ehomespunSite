@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block title %}Account Details{% endblock %}
+
+{% block body %}
+<div class="container mx-auto">
+    <h1>Upgrade membership to {{membership_type}}</h1>
+    <form action="/charge-membership/" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="membership-type" value="{{membership_type}}">
+        <input type="hidden" name="amount" value="{{amount}}">
+        <script 
+                src='https://checkout.stripe.com/checkout.js' 
+                class='stripe-button'
+                data-key={{key}}
+                data-description='Payment Gateway'
+                data-amount='{{amount_int}}'
+                data-locale='auto'
+            >
+            
+            </script>
+    </form>
+</div>
+{% endblock %}
