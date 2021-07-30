@@ -2,6 +2,18 @@ from django.db import models
 import datetime
 
 # Create your models here.
+class SupportRequest(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, default="")
+    email = models.CharField(max_length=50, default="")
+    subject = models.CharField(max_length=50, default="")
+    description = models.TextField(default="")
+    image = models.ImageField(upload_to="support/images", default="")
+    category = models.CharField(max_length=50, default="")
+
+    def __str__(self):
+        return self.name
+
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -238,7 +250,7 @@ class Order(models.Model):
     product_tax_class = models.CharField(max_length=20, default="")
     currency = models.CharField(max_length=5,  default="$")
     quantity = models.IntegerField(default=0)
-    total_tax = models.IntegerField(default=0)
+    total_tax = models.CharField(default="", max_length=10)
     total_cost = models.IntegerField(default=0)
     first_name = models.CharField(max_length=50, default="")
     last_name = models.CharField(max_length=50, default="")
@@ -249,7 +261,7 @@ class Order(models.Model):
     postcode = models.CharField(max_length=50, default="")
     phone = models.CharField(max_length=50, default="")
     email = models.CharField(max_length=50, default="")
-
+    refund_status = models.CharField(max_length=50, default="")
 
     def __str__(self):
         return self.buyer_name

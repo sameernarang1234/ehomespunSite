@@ -23,7 +23,7 @@
     <div class="container-2 col-6">
         <div class="container-fluid">
             {% for product in orders %}
-            <div class="main-product-container container-fluid">
+            <div class="main-product-container container-fluid my-4">
                 <div class="container-fluid product-container">
                     <img src="{{product.product_image1}}" alt="{{product.product_title}}" class="product-image">
                     <p class="ms-3"><strong>{{product.product_name}}</strong></p>
@@ -31,20 +31,20 @@
                     <p class="ms-3">Quantity: {{product.quantity}}</p>
                 </div>
                 <div class="product-container mt-3">
-                    <form action="/product/" method="GET">
+                    <form action="/order-details/" method="GET">
                         <input type="hidden" name="product_id" value="{{product.id}}">
-                        <button class="btn btn-primary">View Product</button>
+                        <button class="btn btn-primary">View Order</button>
                     </form>
-                    <form class="non-first-button" action="/checkout-summary/" method="GET">
+                    <form class="non-first-button" action="/request-refund/" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="product_id" value="{{product.id}}">
-                        <input type="hidden" name="quantity" value="{{product.quantity}}">
-                        <button class="btn btn-success" type="submit">Checkout</button>
-                    </form>
-                    <form class="non-first-button" action="/cart/" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="product_id" value="{{product.id}}">
-                        <button class="btn btn-danger" type="submit">Remove</button>
+                        {% if product.refund_status == "" %}
+                        <button class="btn btn-danger" type="submit">Request Refund</button>
+                        {% elif product.refund_status == "REFUNDED" %}
+                        <button class="btn btn-danger disabled" type="submit" disabled>Amount Refunded</button>
+                        {% else %}
+                        <button class="btn btn-danger disabled" type="submit" disabled>Refund Initiated</button>
+                        {% endif %}
                     </form>
                 </div>
             </div>

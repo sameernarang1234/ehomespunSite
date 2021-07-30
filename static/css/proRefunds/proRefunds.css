@@ -38,3 +38,26 @@ span {
 .membership-details {
     text-align: justify;
 }
+
+.main-product-container {
+	background-color: white;
+	margin-top: 50px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-radius: 20px;
+
+}
+
+.product-container {
+    display: flex;
+    align-items: center;
+}
+
+.product-image {
+    height: 50px;
+    width: 50px;
+}
+
+.non-first-button {
+    margin-left: 20px;
+}

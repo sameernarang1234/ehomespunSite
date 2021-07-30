@@ -40,3 +40,22 @@
 .account-details {
     font-size: 1.4rem;
 }
+
+.main-product-container {
+	background-color: white;
+	margin-top: 50px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-radius: 20px;
+
+}
+
+.product-container {
+    display: flex;
+    align-items: center;
+}
+
+.product-image {
+    height: 50px;
+    width: 50px;
+}

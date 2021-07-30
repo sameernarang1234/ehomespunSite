@@ -7,36 +7,45 @@
 
 {% block title %}Support{% endblock %}
 
+{% block notification %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong> Your support request has been submitted to the admin.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endblock %}
+
 {% block body %}
 <h1 class="page-heading">Support</h1>
-<div class="new-ticket">
+<div class="new-ticket mb-4">
     <div>
-        <form action="" method="post">
-            <p><strong>Name </strong><span>*</span></p>
+        <form action="/support/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p class="mt-4"><strong>Name </strong><span>*</span></p>
             <p>Please insert your name.</p>
             <input name="name" type="text" class="form-control">
 
-            <p><strong>Email Address </strong><span>*</span></p>
+            <p class="mt-4"><strong>Email Address </strong><span>*</span></p>
             <p>Please insert your Email ID.</p>
             <input name="email" type="email" class="form-control">
 
-            <p><strong>Subject </strong><span>*</span></p>
+            <p class="mt-4"><strong>Subject </strong><span>*</span></p>
             <p>Short description of the ticket</p>
             <input name="subject" type="text" class="form-control">
 
-            <p><strong>Description </strong><span>*</span></p>
+            <p class="mt-4"><strong>Description </strong><span>*</span></p>
             <p>Detailed description of the ticket</p>
             <input name="description" type="text" class="description">
 
-            <p><strong>Attach File</strong></p>
-            <input name="file" type="file">
+            <p class="mt-4"><strong>Attach File</strong></p>
+            <input name="file_uploaded" type="file">
 
-            <p><strong>Select Category </strong><span>*</span></p>
-            <p>Select a category</p>
-            <input name="General" type="checkbox"> General <br>
-            <input name="Account" type="checkbox"> Account Enquiries <br>
-            <input name="Refund" type="checkbox"> Refund <br>
-            <input name="Return" type="checkbox"> Exchanges and Returns <br>
+            <p class="mt-4"><strong>Select Category </strong><span>*</span></p>
+            <select name="category">
+                <option value="General">General</option>
+                <option value="Account">Account</option>
+                <option value="Refund">Refund</option>
+                <option value="Return">Return</option>
+            </select>
             <div class="button-container">
                 <button type="submit" class="submit">Submit</button>
                 <button type="reset" class="reset">Reset Form</button>

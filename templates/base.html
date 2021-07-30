@@ -25,7 +25,9 @@
     {% block notification %}{% endblock %}
     
     <div class="nav-bar">
-        <img src="../static/assets/logo.png" alt="eHomespun-logo">
+        <a href="/" class="ehomespun-logo">
+            <img src="../static/assets/logo.png" alt="eHomespun-logo">
+        </a>
         <form class="form-horizontal" action="/search-product/" method="GET">
             <input type="text" name="search-term" placeholder="Search" class="text-input">
             <input id="category" type="hidden" name="category">
@@ -97,7 +99,7 @@
                         <a class="nav-link active" aria-current="page" href="/refund-policy/">Refund Policy</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/password-reset/">Password Reset</a>
+                        <a class="nav-link active" aria-current="page" href="/reset-password/">Password Reset</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Homepage</a>

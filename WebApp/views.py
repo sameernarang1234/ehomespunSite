@@ -1,6 +1,6 @@
 from django.db.models.enums import IntegerChoices
 from django.shortcuts import render, redirect
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, AdminPaymentDetail, Order, AdminTaxRules, BuyerState, MembershipPrice
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, AdminPaymentDetail, Order, AdminTaxRules, BuyerState, MembershipPrice, SupportRequest
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -129,7 +129,7 @@ def loginUser(request):
             login(request, loggedInUser)
             request.session["username"] = inputUsername
             if loginRemember == "on":
-                request.session.set_expiry(86400)
+                request.session.set_expiry(86400*7)
             else:
                 request.session.set_expiry(0)
 
@@ -214,10 +214,38 @@ def supportPage(request):
             price = cart_product.sale_price
             cart_total += float(price * quantity)
 
+    request_submitted = False
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        description = request.POST.get("description")
+
+        image1 = request.FILES["file_uploaded"]
+        fs1 = FileSystemStorage()
+        filename1 = fs1.save(image1.name, image1)
+        file_url = fs1.url(filename1)
+
+        category = request.POST.get("category")
+
+        support_request = SupportRequest(
+            name=name, 
+            email=email, 
+            subject=subject, 
+            description=description, 
+            image=file_url,
+            category=category
+        )
+        support_request.save()
+        request_submitted = True
+
+
+
     categories = Category.objects.all()
     params = {
         "categories": categories,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "request_submitted": request_submitted
     }
     return render(request, 'support.html', params)
 
@@ -884,23 +912,25 @@ def proOrders(request):
     
     cart_total = 0.00
 
-    if username is not None:
-        user = UserDatabase.objects.get(username=username)
-        buyer_id = user.id
-        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
 
-        cart_total = 0.00
-        for cart_item in cart_items:
-            product_id = cart_item.product_id
-            quantity = cart_item.product_quantity
-            cart_product = Product.objects.get(id=product_id)
-            price = cart_product.sale_price
-            cart_total += float(price * quantity)
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+    
+    products = Order.objects.filter(seller_id=buyer_id)
 
     categories = Category.objects.all()
     params = {
         "categories": categories,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "products": products
     }
     return render(request, 'proOrders.html', params)
 
@@ -1541,23 +1571,31 @@ def proRefunds(request):
     
     cart_total = 0.00
     
-    if username is not None:
-        user = UserDatabase.objects.get(username=username)
-        buyer_id = user.id
-        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
 
-        cart_total = 0.00
-        for cart_item in cart_items:
-            product_id = cart_item.product_id
-            quantity = cart_item.product_quantity
-            cart_product = Product.objects.get(id=product_id)
-            price = cart_product.sale_price
-            cart_total += float(price * quantity)
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    orders = Order.objects.filter(seller_id=buyer_id)
+
+    refunds = []
+
+    for order in orders:
+        if order.refund_status != "":
+            refunds.append(order)
 
     categories = Category.objects.all()
     params = {
         "categories": categories,
-        "cart_total": cart_total
+        "cart_total": cart_total,
+        "orders": refunds
     }
     return render(request,"proRefunds.html", params)
 
@@ -2592,6 +2630,7 @@ def checkout(request):
     quantity = request.POST.get("quantity")
     amount = float(request.POST.get("amount"))
     tax = float(request.POST.get("tax"))
+    coupon_code = request.POST.get("coupon-code")
 
     shipping = "NATIONAL"
 
@@ -2633,6 +2672,13 @@ def checkout(request):
     stripe.api_key = adminPaymentDetails.stripe_private_key
 
     key = adminPaymentDetails.stripe_public_key
+
+    try:
+        coupon = Coupon.objects.get(code=coupon_code)
+        coupon_amount = float(coupon.coupon_amount)
+        amount -= coupon_amount
+    except:
+        print()
 
     total_tax = tax * amount
     amount_int = int(amount * 100)
@@ -2752,7 +2798,7 @@ def charge(request):
         )
         order.save()
 
-        cart_item = Cart.objects.get(product_id=product.id)
+        cart_item = Cart.objects.get(product_id=product.id, buyer_id=buyer_id)
         cart_item.delete()
 
     return redirect("ordersPage")
@@ -2852,6 +2898,7 @@ def checkoutAll(request):
     phone = request.POST.get("phone")
     email = request.POST.get("email")
     total_amount = float(request.POST.get("total_amount"))
+    coupon_code = request.POST.get("coupon-code")
 
     for cart_item in cart_items:
         shipping = "NATIONAL"
@@ -2900,6 +2947,13 @@ def checkoutAll(request):
     stripe.api_key = adminPaymentDetails.stripe_private_key
 
     key = adminPaymentDetails.stripe_public_key
+
+    try:
+        coupon = Coupon.objects.get(code=coupon_code)
+        coupon_amount = float(coupon.coupon_amount)
+        amount -= coupon_amount
+    except:
+        print()
 
     amount_int = int(total_amount * 100)
 
@@ -2993,7 +3047,6 @@ def chargeAll(request):
                         tax_percentage = float(tax.reduced_rate_class_tax_percentage)
             total_tax = tax_percentage * float(product.sale_price)
             total_cost = float(product.sale_price) + total_tax
-            
 
             order = Order(
                 seller_id=seller_id,
@@ -3135,6 +3188,61 @@ def chargeMembership(request):
             )
             store.save()
 
-
-
     return redirect("proDashboard")
+
+def requestRefund(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+    
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+    
+    order_id = request.POST.get('product_id')
+    order = Order.objects.get(id=order_id)
+    order.refund_status = "APPLIED"
+    order.save()
+
+    return redirect("userDashboard")
+
+def orderDetailsPage(request):
+    try:
+        username = request.session["username"]
+    except:
+        logout(request)
+        return redirect("loginPage")
+
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    order_id = request.GET.get("product_id")
+
+    order = Order.objects.get(id=order_id) 
+
+    params = {
+        "cart_total": cart_total,
+        "order": order
+    }
+
+    return render(request, "orderDetails.html", params)
+    

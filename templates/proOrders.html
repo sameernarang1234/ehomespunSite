@@ -16,7 +16,6 @@
         <div class="col-xl-2 col-sm-3"><a href="/pro-products/">Products</a></div>
         <div class="col-xl-2 col-sm-3"><a href="/pro-orders/">Orders</a></div>
         <div class="col-xl-2 col-sm-3"><a href="/pro-settings/">Settings</a></div>
-        <div class="col-xl-2 col-sm-3"><a href="/pro-ratings/">Ratings</a></div>
         <div class="col-xl-2 col-sm-3"><a href="/pro-refunds/">Refund Requests</a></div>
         <div class="col-xl-2 col-sm-3"><a href="/pro-shipping/">Shipping</a></div>
         <div class="col-xl-2 col-sm-3"><a href="/pro-coupons/">Coupons</a></div>
@@ -27,6 +26,25 @@
 <div class="container sub-header-container">
     <p>Welcome to the Seller's Club! Please make sure to add your Payment Information (PayPal email, Bank info, etc.) so you can receive payments for your orders. Tip: For adding your shop logo and banner image - Click "settings", then click "Branding". There you will be able to add the images of your choice. Lastly, please feel free to join our "eHomespun Seller Support" group on Facebook.</p>
 </div>
+
+{% for product in products %}
+<div class="container my-4">
+    <div class="main-product-container container-fluid">
+        <div class="container-fluid product-container">
+            <img src="{{product.product_image1}}" alt="{{product.product_title}}" class="product-image">
+            <p class="ms-3"><strong>{{product.product_name}}</strong></p>
+            <p class="ms-3">Price: ${{product.product_sale_price}}</p>
+            <p class="ms-3">Quantity: {{product.quantity}}</p>
+        </div>
+        <div class="product-container mt-3">
+            <form action="/order-details/" method="GET">
+                <input type="hidden" name="product_id" value="{{product.id}}">
+                <button class="btn btn-primary">View Order</button>
+            </form>
+        </div>
+    </div>
+</div>    
+{% endfor %}
 
 
 {% endblock %}

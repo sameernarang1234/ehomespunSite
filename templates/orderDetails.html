@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/orderDetails/orderDetails.css' %}">
+{% endblock %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block body %}
+<div class="container">
+    <p class="my-4"><strong>Seller</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.seller_name}}" placeholder="{{order.seller_name}}">
+
+    <p class="my-4"><strong>Buyer</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.buyer_name}}" placeholder="{{order.buyer_name}}">
+
+    <p class="my-4"><strong>Product</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.product_name}}" placeholder="{{order.product_name}}">
+
+    <p class="my-4"><strong>Product Description</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.product_description}}" placeholder="{{order.product_description}}">
+
+    <p class="my-4"><strong>Product Short Description</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.product_short_description}}" placeholder="{{order.product_short_description}}">
+
+    <p class="my-4"><strong>Product Category</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.product_category_name}}" placeholder="{{order.product_category_name}}">
+
+    <p class="my-4"><strong>Price</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.product_sale_price}}" placeholder="{{order.product_sale_price}}">
+
+    <p class="my-4"><strong>Buyer Name</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.first_name}} {{order.last_name}}" placeholder="{{order.first_name}} {{order.last_name}}">
+
+    <p class="my-4"><strong>Buyer Address</strong></p>
+    <textarea type="text" class="form-control disabled" disabled value="{{order.address}}" placeholder="{{order.address}}"></textarea>
+    
+    <p class="my-4"><strong>Buyer City</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.city}}" placeholder="{{order.city}}">
+    
+    <p class="my-4"><strong>Buyer State</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.state}}" placeholder="{{order.state}}">
+    
+    <p class="my-4"><strong>Buyer Country</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.country}}" placeholder="{{order.country}}">
+
+    <p class="my-4"><strong>Buyer Contact</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.phone}}" placeholder="{{order.phone}}">
+
+    <p class="my-4"><strong>Buyer Email</strong></p>
+    <input type="text" class="form-control disabled" disabled value="{{order.email}}" placeholder="{{order.email}}">
+
+    <p class="my-4"><strong>Refund Status</strong></p>
+    <input type="text" class="form-control disabled mb-5" disabled value="{{order.refund_status}}" placeholder="{{order.refund_status}}">
+</div>
+{% endblock %}
