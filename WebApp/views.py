@@ -3640,11 +3640,15 @@ def charge(request):
         cart_item = Cart.objects.get(product_id=product.id, buyer_id=buyer_id)
         cart_item.delete()
 
+        admin = UserDatabase.objects.get(user_type="ADMIN")
+        admin_email = admin.email
+        seller = UserDatabase.objects.get(id=seller_id)
+        seller_email = seller.email
         send_mail(
             'New Orders on ehomespun.com',
-            'You have a new order on ehomespun.com. Please login to check.',
-            'from@example.com',
-            ['to@example.com'],
+            'You have new multiple orders on ehomespun.com. Please login to check.',
+            admin_email,
+            [seller_email],
             fail_silently=False,
         )
 
@@ -3933,11 +3937,15 @@ def chargeAll(request):
             cart_item = Cart.objects.get(product_id=product.id)
             cart_item.delete()
         
+        admin = UserDatabase.objects.get(user_type="ADMIN")
+        admin_email = admin.email
+        seller = UserDatabase.objects.get(id=seller_id)
+        seller_email = seller.email
         send_mail(
             'New Orders on ehomespun.com',
             'You have new multiple orders on ehomespun.com. Please login to check.',
-            'from@example.com',
-            ['to@example.com'],
+            admin_email,
+            [seller_email],
             fail_silently=False,
         )
 
