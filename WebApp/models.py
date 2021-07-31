@@ -17,6 +17,7 @@ class SupportRequest(models.Model):
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to="category/images", default="")
 
     def __str__(self):
         return self.name
@@ -262,6 +263,7 @@ class Order(models.Model):
     phone = models.CharField(max_length=50, default="")
     email = models.CharField(max_length=50, default="")
     refund_status = models.CharField(max_length=50, default="")
+    date = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return self.buyer_name

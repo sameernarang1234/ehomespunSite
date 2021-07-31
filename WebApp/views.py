@@ -1,15 +1,49 @@
 from django.db.models.enums import IntegerChoices
 from django.shortcuts import render, redirect
-from .models import Category, SubCategory, UserDatabase, Product, StoreState, Order, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, AdminPaymentDetail, Order, AdminTaxRules, BuyerState, MembershipPrice, SupportRequest
+
+from .models import Category, SubCategory, UserDatabase, Product, StoreState, Store, SellerPaymentDetail, Shipping, Coupon, UserReview, UserComment, Cart, Wishlist, BuyerBillingAddress, BuyerAddress, AdminPaymentDetail, Order, AdminTaxRules, BuyerState, MembershipPrice, SupportRequest
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from datetime import date, timedelta
 
+from .serializers import CategorySerializer, SubCategorySerializer, UserDatabaseSerializer, ProductSerializer, StoreStateSerializer, StoreSerializer, SellerPaymentDetailSerializer, ShippingSerializer, CouponSerializer, UserReviewSerializer, UserCommentSerializer, CartSerializer, WishlistSerializer, BuyerBillingAddressSerializer, BuyerAddressSerializer, AdminPaymentDetailSerializer, OrderSerializer, AdminTaxRulesSerializer, BuyerStateSerializer, MembershipPriceSerializer, SupportRequestSerializer
+
 import stripe
 
+from django.core.mail import send_mail
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
 # Create your views here.
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+
+        userDB = UserDatabase.objects.get(email=user.email)
+        user_type = userDB.user_type
+
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email,
+            "user_type": user_type
+        })
+
 def homePage(request):
     try:
         username = request.session["username"]
@@ -36,21 +70,70 @@ def homePage(request):
 
     products = []
     count = 0
+    discount_products = []
     for product in allProducts:
         if count > 4:
             break
         products.append(product)
         count += 1
+        print("PRICES")
+        print(product.price)
+        print(product.sale_price)
+        price = float(product.price)
+        sale_price = float(product.sale_price)
+        if price != sale_price:
+            discount_products.append(product)
     
     print(products)
     
     params = {
         "categories": categories,
         "products": products,
+        "discount_products": discount_products,
         "cart_total": cart_total
     }
     return render(request, 'home.html', params)
 
+@api_view(["GET"])
+def homePageApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    if str(user) != "AnonymousUser":
+        email = user.email
+        userDB = UserDatabase.objects.get(email=email)
+        buyer_id = userDB.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = float(cart_product.sale_price)
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    allProducts = Product.objects.all()
+
+    serialized_products = ProductSerializer(allProducts, many=True)
+
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    products = []
+    count = 0
+    for product in serialized_products.data:
+        if count > 4:
+            break
+        products.append(product)
+        count += 1
+    
+    return Response({
+        "categories": serialized_categories.data,
+        "products": products,
+        "cart_total": cart_total
+    })
+    
 def loginPage(request):
     try:
         username = request.session["username"]
@@ -76,6 +159,15 @@ def loginPage(request):
         "cart_total": cart_total
     }
     return render(request, 'login.html', params)
+
+@api_view(["GET"])
+def loginPageApi(request):
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories
+    })
 
 def handleSignup(request):
     if request.method == 'POST':
@@ -118,6 +210,36 @@ def handleSignup(request):
                 return redirect("proDashboard")
     return redirect("loginPage")
 
+def handleSignupApi(request):
+    if request.method == 'POST':
+        inputUsername = request.POST.get('username')
+        inputEmail = request.POST.get('email')
+        inputPassword = request.POST.get('password')
+        isMerchantAccount = request.POST.get('isMerchantAccount')
+        signupRemember = request.POST.get('signup-remember')
+
+        userType = ""
+
+        if (isMerchantAccount == "on"):
+            userType = "MERCHANT"
+        else:
+            userType = "BUYER"
+
+        user = User.objects.create_user(inputUsername, inputEmail, inputPassword)
+        user.save()
+
+        userDB = UserDatabase(
+            username=inputUsername,
+            email=inputEmail,
+            user_type=userType
+        )
+        userDB.save()
+
+        return Response({
+            "status_code": 200,
+            "message": "You have been successfully registered"
+        })
+
 def loginUser(request):
     if request.method == "POST":
         inputUsername = request.POST.get("username")
@@ -150,6 +272,18 @@ def logoutUser(request):
     except:
         print()
     return redirect("homePage")
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logoutUserApi(request):
+    user = request.user
+    token = Token.objects.get(user=user)
+    token.delete()
+
+    return Response({
+        "message": "You have been successfully logged out."
+    })
 
 def dashboard(request):
     try:
@@ -193,6 +327,36 @@ def userDashboard(request):
         "cart_total": cart_total
     }
     return render(request, "userDashboard.html", params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def userDashboardApi(request):
+    user = request.user
+    username = user.name
+
+    cart_total = 0.00
+    
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "cart_total": cart_total,
+        "categories": serialized_categories
+    })
+
 
 def supportPage(request):
     try:
@@ -239,8 +403,6 @@ def supportPage(request):
         support_request.save()
         request_submitted = True
 
-
-
     categories = Category.objects.all()
     params = {
         "categories": categories,
@@ -248,6 +410,60 @@ def supportPage(request):
         "request_submitted": request_submitted
     }
     return render(request, 'support.html', params)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def supportPageApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    request_submitted = False
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        description = request.POST.get("description")
+
+        image1 = request.FILES["file_uploaded"]
+        fs1 = FileSystemStorage()
+        filename1 = fs1.save(image1.name, image1)
+        file_url = fs1.url(filename1)
+
+        category = request.POST.get("category")
+
+        support_request = SupportRequest(
+            name=name, 
+            email=email, 
+            subject=subject, 
+            description=description, 
+            image=file_url,
+            category=category
+        )
+        support_request.save()
+        request_submitted = True
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "request_submitted": request_submitted,
+        "cart_total": cart_total
+    })
 
 def buyerTerms(request):
     try:
@@ -276,6 +492,33 @@ def buyerTerms(request):
     }
     return render(request, 'buyerTerms.html', params)
 
+@api_view(["POST"])
+def buyerTermsApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    if str(user) != "AnonymousUser":
+        username = user.name
+        userDB = UserDatabase.objects.get(username=username)
+        buyer_id = userDB.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    })
+
 def sellerTerms(request):
     try:
         username = request.session["username"]
@@ -302,6 +545,33 @@ def sellerTerms(request):
         "cart_total": cart_total
     }
     return render(request, 'sellerTerms.html', params)
+
+@api_view(["POST"])
+def sellerTermsApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    if str(user) != "AnonymousUser":
+        username = user.name
+        userDB = UserDatabase.objects.get(username=username)
+        buyer_id = userDB.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    })
 
 def refundPolicy(request):
     try:
@@ -330,6 +600,33 @@ def refundPolicy(request):
         "cart_total": cart_total
     }
     return render(request, 'refund.html', params)
+
+@api_view(["POST"])
+def refundPolicyApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    if str(user) != "AnonymousUser":
+        username = user.name
+        userDB = UserDatabase.objects.get(username=username)
+        buyer_id = userDB.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    })
 
 def passwordReset(request):
     try:
@@ -387,6 +684,36 @@ def ordersPage(request):
         "orders": orders
     }
     return render(request, 'ordersPage.html', params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def ordersPageApi(request):
+    user = request.user
+    username = user.name
+
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    orders = Order.objects.filter(buyer_id=buyer_id)   
+    categories = Category.objects.all()
+
+    serialized_orders = OrderSerializer(orders, many=True)
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "orders": serialized_orders
+    })
 
 def subscriptionsPage(request):
     try:
@@ -473,6 +800,33 @@ def addressPage(request):
     }
     return render(request, 'addressPage.html', params)
 
+@api_view(["POST"])
+def addressPageApi(request):
+    user = request.user
+
+    cart_total = 0.00
+    if str(user) != "AnonymousUser":
+        username = user.name
+        userDB = UserDatabase.objects.get(username=username)
+        buyer_id = userDB.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    })
+
 def accountPage(request):
     try:
         username = request.session["username"]
@@ -504,6 +858,7 @@ def accountPage(request):
         categories = Category.objects.all()
         params = {
             "categories": categories,
+            "cart_total": cart_total
         }
         return render(request, "accountPage.html", params)
 
@@ -521,6 +876,53 @@ def accountPage(request):
             }
 
     return render(request, 'accountPage.html', params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def accountPageApi(request):
+    user = request.user
+
+    cart_total = 0.00
+
+    username = user.name
+    userDB = UserDatabase.objects.get(username=username)
+    buyer_id = userDB.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+    
+    try:
+        buyerAddress = BuyerAddress.objects.get(user_id=buyer_id)
+    except:
+        categories = Category.objects.all()
+        serialized_categories = CategorySerializer(categories, many=True)
+        
+        return Response({
+            "categories": serialized_categories,
+            "cart_total": cart_total
+        })
+    
+    first_name = buyerAddress.first_name
+    last_name = buyerAddress.last_name
+    email = buyerAddress.email
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    return Response({
+        "categories": serialized_categories,
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "cart_total": cart_total
+    })
 
 def becomeSellerPage(request):
     try:
@@ -556,6 +958,73 @@ def becomeSellerPage(request):
         "cart_total": cart_total
     }
     return render(request, 'becomeSellerPage.html', params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def becomeSellerPageApi(request):
+    user = request.user
+
+    cart_total = 0.00
+
+    if str(user) != "AnonymousUser":
+        username = user.name
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+    params = {
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    }
+    return Response(params)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def becomeSellerPageApi2(request):
+    user = request.user
+
+    cart_total = 0.00
+
+    if str(user) != "AnonymousUser":
+        username = user.name
+        user = UserDatabase.objects.get(username=username)
+        buyer_id = user.id
+        cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+        cart_total = 0.00
+        for cart_item in cart_items:
+            product_id = cart_item.product_id
+            quantity = cart_item.product_quantity
+            cart_product = Product.objects.get(id=product_id)
+            price = cart_product.sale_price
+            cart_total += float(price * quantity)
+
+    if request.method == "POST":
+        user = UserDatabase.objects.get(username=username)
+        user.user_type = "MERCHANT"
+        user.save()
+
+        return redirect("proSettings")
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+    params = {
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    }
+    return Response(params)
 
 def proDashboard(request):
     try:
@@ -615,6 +1084,65 @@ def proDashboard(request):
     }
 
     return render(request, 'proDashboard.html', params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def proDashboardApi(request):
+    user = request.user
+    
+    cart_total = 0.00
+    
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    user = UserDatabase.objects.get(username=username)
+    user_id = user.id
+
+    orders = Order.objects.filter(seller_id=user_id)
+
+    num_orders = 0
+    amount_orders = 0.00
+    for order in orders:
+        num_orders += 1
+        try:
+            amount_orders += float(order.price)
+        except:
+            amount_orders += 0.00
+    
+    products = Product.objects.filter(seller_id=user_id)
+
+    num_products = 0
+    amount_products = 0.00
+    for product in products:
+        num_products += 1
+        try:
+            amount_products += float(product.sale_price)
+        except:
+            amount_products += 0.00
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+    params = {
+        "num_orders": num_orders,
+        "amount_orders": amount_orders,
+        "num_products": num_products,
+        "amount_products": amount_products,
+        "categories": serialized_categories,
+        "cart_total": cart_total
+    }
+
+    return Response(params)
 
 def proProducts(request):
     try:
@@ -681,6 +1209,74 @@ def proProducts(request):
     }
 
     return render(request, 'proProducts.html', params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def proProductsApi(request):
+    user = request.user
+    
+    cart_total = 0.00
+    
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    user = UserDatabase.objects.get(username=username)
+    user_id = user.id
+    allProducts = Product.objects.filter(seller_id=user_id)
+    
+    page = request.GET.get('page-number')
+    page_number = 0
+    if page == None:
+        page_number = 1
+    else:
+        page_number = int(page)
+    
+    prev_page = 0
+    next_page = 0
+
+    if page_number != 1:
+        prev_page = page_number - 1
+    
+    start_index = (page_number - 1) * 2
+    end_index = start_index + 2
+
+    products = []
+    if end_index >= len(allProducts):
+        products = allProducts[start_index:]
+    else:
+        products = allProducts[start_index:end_index]
+        next_page = page_number + 1
+
+    store = Store.objects.get(seller_id=user_id)
+    is_member = True
+    if store.membership_status == "inactive":
+        is_member = False
+
+    serialized_products = ProductSerializer(products, many=True)
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+    params = {
+        "products": serialized_products,
+        "next_page": next_page,
+        "prev_page": prev_page,
+        "categories": serialized_categories,
+        "cart_total": cart_total,
+        "is_member": is_member
+    }
+
+    return Response(params)
 
 def addProduct(request):
 
@@ -768,6 +1364,91 @@ def addProduct(request):
         "cart_total": cart_total
     }
     return render(request, 'addProduct.html', params)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def addProductApi(request):
+    user = request.user
+    
+    cart_total = 0.00
+
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    product_saved = False
+
+    product_name = request.POST.get("product_name")
+    product_description = request.POST.get("product_description")
+    product_short_description = request.POST.get("product_short_description")
+    category_name = request.POST.get("categoryName")
+
+    category = Category.objects.get(name=category_name)
+    category_id = category.id
+
+    image1 = request.FILES["image1_file"]
+    fs1 = FileSystemStorage()
+    filename1 = fs1.save(image1.name, image1)
+    image1_url = fs1.url(filename1)
+
+    image2 = request.FILES["image2_file"]
+    fs2 = FileSystemStorage()
+    filename2 = fs2.save(image2.name, image2)
+    image2_url = fs2.url(filename2)
+
+    image3 = request.FILES["image3_file"]
+    fs3 = FileSystemStorage()
+    filename3 = fs3.save(image3.name, image3)
+    image3_url = fs3.url(filename3)
+
+    product_type = request.POST.get("product-type")
+    regular_price = request.POST.get("regular-price")
+    sale_price = request.POST.get("sale-price")
+    tax_status = request.POST.get("tax-status")
+    tax_class = request.POST.get("tax-class")
+    stock_status = request.POST.get("stock-status")
+
+    seller = request.session["username"]
+    user = UserDatabase.objects.get(username=seller)
+    seller_id = user.id
+
+    product = Product(
+        name=product_name,
+        description=product_description,
+        short_description=product_short_description,
+        category_id= category_id,
+        image1=image1_url,
+        image2=image2_url,
+        image3=image3_url,
+        type=product_type,
+        price=regular_price,
+        sale_price=sale_price,
+        tax_status=tax_status,
+        tax_class=tax_class,
+        stock_status=stock_status,
+        seller_id=seller_id
+    )
+    product.save()
+    product_saved = True
+
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+    params = {
+        "categories": serialized_categories,
+        "saved": product_saved,
+        "cart_total": cart_total
+    }
+    return Response(params)
 
 def proUpdateProduct(request):
     try:
@@ -902,6 +1583,164 @@ def proUpdateProduct(request):
             }
 
     return render(request, "proUpdateProduct.html", params)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def proUpdateProduct(request):
+    user = request.user
+    
+    cart_total = 0.00
+    
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+    
+    product_modified = False
+        
+    product_id = request.POST.get("product_id")
+
+    product_name = request.POST.get("product_name")
+    product_description = request.POST.get("product_description")
+    product_short_description = request.POST.get("product_short_description")
+    category_name = request.POST.get("categoryName")
+
+    category = Category.objects.get(name=category_name)
+    category_id = category.id
+    
+    try:
+        image1 = request.FILES["image1_file"]
+        fs1 = FileSystemStorage()
+        filename1 = fs1.save(image1.name, image1)
+        image1_url = fs1.url(filename1)
+    except:
+        image1_url = ""
+
+    try:
+        image2 = request.FILES["image2_file"]
+        fs2 = FileSystemStorage()
+        filename2 = fs2.save(image2.name, image2)
+        image2_url = fs2.url(filename2)
+    except:
+        image2_url = ""
+
+    try:
+        image3 = request.FILES["image3_file"]
+        fs3 = FileSystemStorage()
+        filename3 = fs3.save(image3.name, image3)
+        image3_url = fs3.url(filename3)
+    except:
+        image3_url = ""
+
+    product_type = request.POST.get("product-type")
+    regular_price = request.POST.get("regular-price")
+    sale_price = request.POST.get("sale-price")
+    tax_status = request.POST.get("tax-status")
+    tax_class = request.POST.get("tax-class")
+    stock_status = request.POST.get("stock-status")
+
+    seller = request.session["username"]
+    user = UserDatabase.objects.get(username=seller)
+    seller_id = user.id
+
+    product = Product.objects.get(id=product_id)
+
+    if product_name != "":
+        product.name = product_name
+    
+    if product_description != "":
+        product.description = product_description
+
+    if product_short_description != "":
+        product.short_description = product_short_description
+
+    if category_id != "":
+        product.category_id = category_id
+    
+    if image1_url != "":
+        product.image1 = image1_url
+    
+    if image2_url != "":
+        product.image2 = image2
+    
+    if image3_url != "":
+        product.image3 = image3_url
+    
+    if product_type != "":
+        product.type = product_type
+    
+    if regular_price != "":
+        product.price = regular_price
+    
+    if sale_price != "":
+        product.sale_price = sale_price
+    
+    if tax_status != "":
+        product.tax_status = tax_status
+    
+    if tax_class != "":
+        product.tax_class = tax_class
+    
+    if stock_status != "":
+        product.stock_status = stock_status
+    
+    product.save()
+    product_modified = True
+
+    params = {
+                "product_modified": product_modified
+            }
+
+    return Response(params)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def proUpdateProduct(request):
+    user = request.user
+    
+    cart_total = 0.00
+    
+    username = user.name
+    user = UserDatabase.objects.get(username=username)
+    buyer_id = user.id
+    cart_items = Cart.objects.filter(buyer_id=buyer_id)
+
+    cart_total = 0.00
+    for cart_item in cart_items:
+        product_id = cart_item.product_id
+        quantity = cart_item.product_quantity
+        cart_product = Product.objects.get(id=product_id)
+        price = cart_product.sale_price
+        cart_total += float(price * quantity)
+
+    user = UserDatabase.objects.get(username=username)
+    seller_id = user.id
+
+    product_id = request.GET.get("product_id")
+    product = Product.objects.get(id=product_id, seller_id=seller_id)
+    serialized_product = ProductSerializer(product)
+    
+    categories = Category.objects.all()
+    serialized_categories = CategorySerializer(categories, many=True)
+
+    params = {
+                "seller_id": seller_id,
+                "product": serialized_product,
+                "categories": serialized_categories,
+                "cart_items": cart_items
+            }
+
+    return Response(params)
 
 def proOrders(request):
     try:
@@ -2801,6 +3640,14 @@ def charge(request):
         cart_item = Cart.objects.get(product_id=product.id, buyer_id=buyer_id)
         cart_item.delete()
 
+        send_mail(
+            'New Orders on ehomespun.com',
+            'You have a new order on ehomespun.com. Please login to check.',
+            'from@example.com',
+            ['to@example.com'],
+            fail_silently=False,
+        )
+
     return redirect("ordersPage")
 
 def checkoutAllSummary(request):
@@ -3007,7 +3854,7 @@ def chargeAll(request):
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )
-
+        
         for cart_item in cart_items:
             product_id = cart_item.product_id
             product = Product.objects.get(id=product_id)
@@ -3082,8 +3929,17 @@ def chargeAll(request):
             )
             order.save()
 
+
             cart_item = Cart.objects.get(product_id=product.id)
             cart_item.delete()
+        
+        send_mail(
+            'New Orders on ehomespun.com',
+            'You have new multiple orders on ehomespun.com. Please login to check.',
+            'from@example.com',
+            ['to@example.com'],
+            fail_silently=False,
+        )
 
     return redirect("ordersPage")
 

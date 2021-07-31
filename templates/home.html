@@ -23,7 +23,7 @@
 </div>
 
 <h1 class="featuredHeading"><strong>Featured Products</strong></h1>
-<div class="featured-container container-fluid">
+<div class="featured-container container-fluid my-5">
     <div class="row">
         {% for product in products %}
         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
@@ -37,10 +37,6 @@
         {% endfor %}
     </div>
 </div>
-<h1 class="Heading">Check Out Our Latest Deals</h1>
-<div class="deals">
-
-</div>
 
 <div class="categoriesHeader">
     <h1>Looking for something?</h1>
@@ -49,9 +45,12 @@
 
 <h1 class="Heading">Choose Category</h1>
 <div class="categories">
-    <div class="container-fluid mx-auto row">
+    <div class="container-fluid mx-auto row my-5 py-5">
         {% for category in categories %}
         <div class="col-lg-3 col-md-6 col-sm-12 categories-sub-container">
+            <div class="container mx-auto">
+                <img src="../static/assets/image1.jpeg" alt="category_image" class="mx-auto category-image">
+            </div>
             <div class="">
                 <form action="/category/" method="get">
                     <input type="hidden" name="category" value="{{category.name}}">
@@ -65,27 +64,23 @@
     </div>
 </div>
 
-<h1 class="Heading">Deal of the Week</h1>
-<div class="dealOfWeek">
-    <div>
-
-    </div>
-    <div>
-
-    </div>
-</div>
-
-<h1 class="Heading">You might like</h1>
-<div class="youMightLike">
-    <div>
-
-    </div>
-    <div>
-
+<h1 class="featuredHeading"><strong>Deals and Discounts</strong></h1>
+<div class="featured-container container-fluid my-5">
+    <div class="row">
+        {% for product in discount_products %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+            <div class="container-fluid product-container">
+                <img src="{{product.image1}}" alt="{{product.title}}" class="product-image">
+                <p><strong>{{product.name}}</strong></p>
+                <p>Price on Sale: {{product.currency}}{{product.sale_price}}, <span>(MRP: ${{product.price}})</span></p>
+                <button class="btn btn-primary">View Product</button>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
-<div class="howItWorks">
+<div class="howItWorks my-5">
     <p class="first-text">BECOME A SELLER AND LIST YOUR PRODUCTS</p>
     <h1>How It Works</h1>
     <p class="second-text">You are one step closer to success</p>
