@@ -289,3 +289,12 @@ class MembershipPrice(models.Model):
 
     def __str__(self):
         return "Membership Price"
+
+class GuestCart(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.IntegerField(default=0)
+    product_quantity = models.IntegerField(default=0)
+    session_id = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.buyer_id)

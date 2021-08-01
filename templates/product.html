@@ -80,7 +80,11 @@
         </div>
         <div class="col-md-4">
             <div class="ms-3 add-to-cart-div">
+                {% if user.is_authenticated %}
                 <form action="/add-to-cart/" method="POST">
+                {% else %}
+                <form action="/add-to-guest-cart/" method="POST">
+                {% endif %}
                     {% csrf_token %}
                     <input class="form-control" type="number" placeholder="Quantity" name="quantity">
                     <input type="hidden" value="{{product.id}}" name="product_id">

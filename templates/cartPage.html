@@ -19,7 +19,11 @@
 {% block body %}
 <div class="container main-shop-container">
 	<h1 class="mt-3"><strong>Your Shopping Cart</strong> (Cart Total: ${{cart_total}})</h1>
+    {% if user.is_authenticated %}
     <form class="my-4" action="/checkout-all-summary/" method="POST">
+    {% else %}
+    <form class="my-4" action="/guest-checkout-all-summary/" method="POST">
+    {% endif %}
         {% csrf_token %}
         <button class="btn btn-success" type="submit">Checkout All</button>
     </form>
@@ -36,13 +40,21 @@
                     <input type="hidden" name="product_id" value="{{product.product.id}}">
                     <button class="btn btn-primary">View Product</button>
                 </form>
+                {% if user.is_authenticated %}
                 <form class="ms-3" action="/checkout-summary/" method="GET">
+                {% else %}
+                <form class="ms-3" action="/guest-checkout-summary/" method="GET">
+                {% endif %}
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{product.product.id}}">
                     <input type="hidden" name="quantity" value="{{product.quantity}}">
                     <button class="btn btn-success" type="submit">Checkout</button>
                 </form>
+                {% if user.is_authenticated %}
                 <form class="ms-3" action="/cart/" method="POST">
+                {% else %}
+                <form class="ms-3" action="/guest-cart/" method="POST">
+                {% endif %}
                     {% csrf_token %}
                     <input type="hidden" name="product_id" value="{{product.product.id}}">
                     <button class="btn btn-danger" type="submit">Remove</button>

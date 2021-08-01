@@ -23,7 +23,11 @@
     <div class="container main-container row mt-3 mx-auto">
         <div class="col-sm-6">
             <div class="container-fluid center-align mx-auto">
+                {% if user.is_authenticated %}
                 <form action="/checkout/" method="post">
+                {% else %}
+                <form action="/guest-checkout/" method="post">
+                {% endif %}
                   {% csrf_token %}
                   <p><strong>Coupon Code <span>*</span></strong></p>
                   <input type="text" class="form-control mb-3" name="coupon-code">

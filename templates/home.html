@@ -49,7 +49,7 @@
         {% for category in categories %}
         <div class="col-lg-3 col-md-6 col-sm-12 categories-sub-container">
             <div class="container mx-auto">
-                <img src="../static/assets/image1.jpeg" alt="category_image" class="mx-auto category-image">
+                <img src="{{category.image}}" alt="category_image" class="mx-auto category-image">
             </div>
             <div class="">
                 <form action="/category/" method="get">

@@ -20,7 +20,11 @@
 <div class="container main-shop-container">
     <h1><strong>Checkout</strong></h1>
     <div class="container-fluid product-container">
-        <form method="post" action="/charge/">
+        {% if user.is_authenticated %}
+        <form method="post" action="/charge-all/">
+        {% else %}
+        <form method="post" action="/guest-charge-all/">
+        {% endif %}
             {% csrf_token %}
             <input type="hidden" name="amount" value="{{amount}}">
             <input type="hidden" name="first_name" value="{{first_name}}">
