@@ -24,7 +24,11 @@
         <p><strong>{{product.name}}</strong></p>
         <p>Total Amount: {{product.currency}}{{amount}}</p>
         <p>Quantity: {{quantity}}</p>
+        {% if user.is_authenticated %}
         <form method="post" action="/charge/">
+        {% else %}
+        <form method="post" action="/guest-charge/">
+        {% endif %}
             {% csrf_token %}
             <input type="hidden" name="amount" value="{{amount}}">
             <input type="hidden" name="quantity" value="{{quantity}}">
@@ -39,6 +43,7 @@
             <input type="hidden" name="email" value="{{email}}">
             <input type="hidden" name="state" value="{{state}}">
             <input type="hidden" name="total_tax" value="{{total_tax}}">
+            <input type="hidden" name="order-notes" value="{{order_notes}}">
             <script 
                 src='https://checkout.stripe.com/checkout.js' 
                 class='stripe-button'

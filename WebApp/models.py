@@ -228,6 +228,7 @@ class AdminPaymentDetail(models.Model):
     id = models.AutoField(primary_key=True, default=1)
     stripe_public_key = models.CharField(max_length=500, default="")
     stripe_private_key = models.CharField(max_length=500, default="")
+    paypal_key = models.CharField(max_length=500, default="")
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
@@ -264,6 +265,7 @@ class Order(models.Model):
     email = models.CharField(max_length=50, default="")
     refund_status = models.CharField(max_length=50, default="")
     date = models.DateField(default=datetime.date.today)
+    order_notes = models.TextField(default="")
 
     def __str__(self):
         return self.buyer_name

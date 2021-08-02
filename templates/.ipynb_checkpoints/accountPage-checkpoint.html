@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/accountPage/accountPage.css' %}">
+{% endblock %}
+
+{% block title %}Account Details{% endblock %}
+
+{% block body %}
+<h1 class="main-heading">Account Details</h1>
+<div class="main-container">
+    <div class="container-1">
+        <div class="container">
+            <a href="/user-dashboard/" class="dashboard-navigation">Dashboard</a>
+            <a href="/orders/" class="dashboard-navigation">Orders</a>
+            <a href="/address/" class="dashboard-navigation">Addresses</a>
+            <a href="/account/" class="dashboard-navigation">Account details</a>
+            <a href="/become-seller/" class="dashboard-navigation">Become a seller</a>
+            <a href="/logout/" class="dashboard-navigation">Logout</a>
+        </div>
+    </div>
+    <div class="container-2">
+
+        <div class="container mb-4">
+            <h2>Account Details</h2>
+            <p class="mt-4">First Name</p>
+            <input class="form-control" placeholder="{{first_name}}" disabled>
+
+            <p class="mt-4">Last Name</p>
+            <input class="form-control" placeholder="{{last_name}}" disabled>
+            
+            <p class="mt-4">Display Name</p>
+            <input class="form-control" placeholder="{{first_name}} {{lirst_name}}" disabled>
+            
+            <p class="mt-4">Email</p>
+            <input class="form-control" placeholder="{{email}}" disabled>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

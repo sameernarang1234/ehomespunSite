@@ -87,21 +87,11 @@ def homePage(request):
 
     print(products)
 
-    allStores = Store.objects.all()
-
-    stores = []
-    count = 0
-    for store in allStores:
-        if count > 9:
-            break
-        stores.append(store)
-
     params = {
         "categories": categories,
         "products": products,
         "discount_products": discount_products,
-        "cart_total": cart_total,
-        "stores": stores
+        "cart_total": cart_total
     }
     return render(request, 'home.html', params)
 
@@ -5395,7 +5385,6 @@ def checkout(request):
     amount = float(request.POST.get("amount"))
     tax = float(request.POST.get("tax"))
     coupon_code = request.POST.get("coupon-code")
-    order_notes = request.POST.get("order-notes")
 
     shipping = "NATIONAL"
 
@@ -5464,8 +5453,7 @@ def checkout(request):
         "postcode": postCode,
         "phone": phone,
         "email": email,
-        "total_tax": total_tax,
-        "order_notes": order_notes
+        "total_tax": total_tax
     }
 
     return render(request, "checkout.html", params)
@@ -5497,7 +5485,7 @@ def charge(request):
         amount_int = int(amount * 100)
         charge = stripe.Charge.create(
             amount=amount_int,
-            currency="usd",
+            currency="inr",
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )
@@ -5529,7 +5517,6 @@ def charge(request):
         phone=request.POST.get("phone")
         email = request.POST.get("email")
         total_tax = request.POST.get("total_tax")
-        order_notes = request.POST.get("order-notes")
 
         order = Order(
             seller_id=seller_id,
@@ -5561,8 +5548,7 @@ def charge(request):
             phone=phone,
             email=email,
             total_cost=total_cost,
-            total_tax=total_tax,
-            order_notes=order_notes
+            total_tax=total_tax
         )
         order.save()
 
@@ -5783,7 +5769,7 @@ def chargeAll(request):
         amount_int = int(amount * 100)
         charge = stripe.Charge.create(
             amount=amount_int,
-            currency="usd",
+            currency="inr",
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )
@@ -5953,7 +5939,7 @@ def chargeMembership(request):
         amount_int = int(amount * 100)
         charge = stripe.Charge.create(
             amount=amount_int,
-            currency="usd",
+            currency="inr",
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )
@@ -6108,7 +6094,6 @@ def guestCheckout(request):
     amount = float(request.POST.get("amount"))
     tax = float(request.POST.get("tax"))
     coupon_code = request.POST.get("coupon-code")
-    order_notes = request.POST.get("order-notes")
 
     shipping = "NATIONAL"
 
@@ -6177,13 +6162,12 @@ def guestCheckout(request):
         "postcode": postCode,
         "phone": phone,
         "email": email,
-        "total_tax": total_tax,
-        "order_notes": order_notes
+        "total_tax": total_tax
     }
 
     return render(request, "checkout.html", params)
 
-def guestCharge(request):
+def charge(request):
     try:
         session_id = request.session["session_id"]
     except:
@@ -6204,7 +6188,7 @@ def guestCharge(request):
         amount_int = int(amount * 100)
         charge = stripe.Charge.create(
             amount=amount_int,
-            currency="usd",
+            currency="inr",
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )
@@ -6233,7 +6217,6 @@ def guestCharge(request):
         phone=request.POST.get("phone")
         email = request.POST.get("email")
         total_tax = request.POST.get("total_tax")
-        order_notes = request.POST.get("order-notes")
 
         order = Order(
             seller_id=seller_id,
@@ -6263,8 +6246,7 @@ def guestCharge(request):
             phone=phone,
             email=email,
             total_cost=total_cost,
-            total_tax=total_tax,
-            order_notes=order_notes
+            total_tax=total_tax
         )
         order.save()
 
@@ -6473,7 +6455,7 @@ def guestChargeAll(request):
         amount_int = int(amount * 100)
         charge = stripe.Charge.create(
             amount=amount_int,
-            currency="usd",
+            currency="inr",
             description="Payment Gateway",
             source=request.POST["stripeToken"]
         )

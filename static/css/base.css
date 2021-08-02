@@ -100,7 +100,7 @@ body {
     background-color: #519bcc;
     color: white;
     display: flex;
-    align-items: center;
+    padding-top: 20px;
 }
 
 .footer div {

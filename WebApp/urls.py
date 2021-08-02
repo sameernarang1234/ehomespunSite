@@ -72,6 +72,7 @@ urlpatterns = [
     path('guest-cart/', views.GuestCartPage, name="GuestCartPage"),
     path('guest-checkout-summary/', views.guestCheckoutSummary, name="GuestCheckoutSummary"),
     path('guest-checkout/', views.guestCheckout, name="GuestCheckout"),
+    path('guest-charge/', views.guestCharge, name="GuestCharge"),
     path('guest-checkout-all-summary/', views.guestCheckoutAllSummary, name="GuestCheckoutAllSummary"),
     path('guest-checkout-all/', views.guestCheckoutAll, name="GuestCheckoutAll"),
     path('guest-charge-all/', views.guestChargeAll, name="GuestChargeAll")
